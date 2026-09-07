@@ -1,0 +1,12 @@
+node_modules/
+.next/
+.env
+*.log
+.DS_Store
+next-env.d.ts
+
+.env.*
+!.env.example
+*.tsbuildinfo
+out/
+coverage/

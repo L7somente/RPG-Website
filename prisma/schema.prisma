@@ -1,0 +1,261 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------- Auth / Users ----------
+
+// PLAYER: normal account, owns up to 5 characters.
+// DM: runs the table — creates quests (pending approval), schedules sessions,
+//     has read access to player character sheets, can view/add inventory items.
+// ADMIN: "master admin" — everything a DM can do, PLUS approves/rejects quests
+//        DMs submit, and has access to both the DM panel and every player panel.
+enum Role {
+  PLAYER
+  DM
+  ADMIN
+}
+
+model User {
+  id              String     @id @default(cuid())
+  discordId       String?    @unique
+  discordAvatar   String?
+  email           String?    @unique
+  username        String     @unique
+  passwordHash    String?
+  role            Role       @default(PLAYER)
+  characters      Character[]
+  chatMessages    ChatMessage[]
+  sessionSignups  SessionParticipant[]
+  createdQuests   Quest[]    @relation("QuestCreator")
+  approvedQuests  Quest[]    @relation("QuestApprover")
+  questVotes      QuestVote[]
+  createdAt       DateTime   @default(now())
+}
+
+// ---------- Characters (max 5 enforced in the API layer, see app/api/characters/route.ts) ----------
+
+model Character {
+  id               String   @id @default(cuid())
+  userId           String
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  name             String
+  race             String
+  class            String
+  level            Int      @default(1)
+  classes          Json     @default("[]")   // multiclass: [{ id, level }] — "class"/"level" above stay in sync as a display summary
+  background       String?
+  alignment        String?
+  playerName       String   @default("")
+
+  strength         Int      @default(10)
+  dexterity        Int      @default(10)
+  constitution     Int      @default(10)
+  intelligence     Int      @default(10)
+  wisdom           Int      @default(10)
+  charisma         Int      @default(10)
+
+  inspiration      Boolean  @default(false)
+  initiative       Int      @default(0)
+  maxHp            Int      @default(10)
+  currentHp        Int      @default(10)
+  tempHp           Int      @default(0)
+  armorClass       Int      @default(10)
+  speed            Int      @default(30)
+  proficiencyBonus Int      @default(2)
+
+  hitDiceTotal       String @default("1d8")
+  hitDiceUsed        Int    @default(0)
+  deathSaveSuccesses Int    @default(0)
+  deathSaveFailures  Int    @default(0)
+
+  skillProficiencies Json   @default("[]")   // slugs, e.g. ["stealth", "perception"]
+  skillExpertise     Json   @default("[]")   // slugs with doubled proficiency bonus
+  savingThrowProfs   Json   @default("[]")   // ability keys, e.g. ["dexterity", "wisdom"]
+
+  attacks          Json     @default("[]")   // [{ name, bonus, damageType }] — the "Attacks & Spells" table
+  languagesProficiencies String @default("") // languages + tool/armor/weapon proficiencies text box
+
+  copperPieces     Int      @default(0)
+  silverPieces     Int      @default(0)
+  electrumPieces   Int      @default(0)
+  goldPieces       Int      @default(0)
+  platinumPieces   Int      @default(0)
+  equipmentList    String   @default("")
+
+  personalityTraits String  @default("")
+  ideals            String  @default("")
+  bonds             String  @default("")
+  flaws             String  @default("")
+
+  age    String @default("")
+  height String @default("")
+  weight String @default("")
+  eyes   String @default("")
+  skin   String @default("")
+  hair   String @default("")
+
+  appearance          String @default("")
+  alliesOrganizations String @default("")
+  characterSymbol     String @default("")
+  backstory           String @default("")
+  additionalFeatures  String @default("")
+  treasure            String @default("")
+
+  spellcastingClass   String @default("")
+  spellcastingAbility String @default("")
+  spellSaveDC         Int    @default(8)
+  spellAttackBonus    Int    @default(0)
+
+  spellSlots         Json   @default("{}")   // e.g. { "1": {"max":4,"used":1}, "2": {...} }
+  spellsKnown        Json   @default("[]")   // e.g. [{"name":"Fire Bolt","level":0,"prepared":true}]
+  features           Json   @default("[]")   // class/race features & traits
+  notes              String?
+
+  inventory        InventoryItem[]
+
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model InventoryItem {
+  id           String    @id @default(cuid())
+  characterId  String
+  character    Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  name         String
+  itemType     String    @default("misc") // weapon | armor | consumable | misc
+  quantity     Int       @default(1)
+  weight       Float     @default(0)
+  equipped     Boolean   @default(false)
+  description  String?
+  properties   Json      @default("{}")   // e.g. { "damage": "1d8", "type": "slashing" }
+
+  @@index([characterId])
+}
+
+// ---------- Global shared XP (single row, id = 1) ----------
+
+model GlobalXP {
+  id             Int      @id @default(1)
+  currentXP      Int      @default(0)
+  xpToNextLevel  Int      @default(1000)
+  currentLevel   Int      @default(1)
+  updatedAt      DateTime @updatedAt
+}
+
+// ---------- Dashboard content ----------
+
+model Quest {
+  id           String    @id @default(cuid())
+  title        String
+  description  String
+  // pending_approval | available | active | completed | rejected
+  // A quest a DM creates starts at pending_approval and only appears on the
+  // player-facing Quest Board once a master admin approves it (see
+  // app/api/quests/[id]/approve/route.ts). An ADMIN's own submissions are
+  // auto-approved.
+  status       String    @default("pending_approval")
+  xpReward     Int       @default(0)
+  createdBy    String    // DM or admin user id
+  creator      User      @relation("QuestCreator", fields: [createdBy], references: [id])
+  approvedBy   String?
+  approver     User?     @relation("QuestApprover", fields: [approvedBy], references: [id])
+  approvedAt   DateTime?
+  createdAt    DateTime  @default(now())
+  completedAt  DateTime?
+  discordThreadId String?
+  missionLog   MissionLogEntry[]
+  votes        QuestVote[]
+}
+
+// A player signaling interest/support for a quest — shown on the Quest Board
+// as "which players voted for this mission".
+model QuestVote {
+  id        String   @id @default(cuid())
+  questId   String
+  quest     Quest    @relation(fields: [questId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([questId, userId])
+  @@index([questId])
+}
+
+model GameSession {
+  id                    String   @id @default(cuid())
+  title                 String
+  scheduledAt           DateTime
+  description           String?
+  durationMinutes       Int      @default(240)
+  discordEventId        String?
+  discordVoiceChannelId String?
+  createdBy             String
+  createdAt             DateTime @default(now())
+  participants          SessionParticipant[]
+}
+
+// A player (optionally with a specific character) signed up for a given table/session.
+// This is the "organização das mesas" the DM manages from /dm.
+model SessionParticipant {
+  id           String      @id @default(cuid())
+  sessionId    String
+  session      GameSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  userId       String
+  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  characterId  String?     // which character they're bringing to this table, if decided yet
+  confirmed    Boolean     @default(true)
+  createdAt    DateTime    @default(now())
+
+  @@unique([sessionId, userId])
+  @@index([sessionId])
+}
+
+model Announcement {
+  id         String   @id @default(cuid())
+  title      String
+  content    String
+  createdBy  String
+  pinned     Boolean  @default(false)
+  createdAt  DateTime @default(now())
+}
+
+model MissionLogEntry {
+  id           String    @id @default(cuid())
+  questId      String?
+  quest        Quest?    @relation(fields: [questId], references: [id])
+  title        String
+  summary      String
+  completedAt  DateTime  @default(now())
+}
+
+// A DM/admin-designed item blueprint. Forged once, then granted to any
+// number of characters from the Item Forge panel in /dm (or /admin).
+model ForgedItem {
+  id           String   @id @default(cuid())
+  name         String
+  itemType     String   @default("misc") // weapon | armor | consumable | misc
+  rarity       String   @default("common") // common | uncommon | rare | very_rare | legendary | artifact
+  weight       Float    @default(0)
+  description  String?  // flavor text
+  properties   Json     @default("{}") // e.g. { "bonus": "+1", "effect": "Deals an extra 1d6 fire damage on hit." }
+  createdBy    String   // DM/admin user id
+  createdAt    DateTime @default(now())
+}
+
+model ChatMessage {
+  id          String   @id @default(cuid())
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id])
+  displayName String   // site username OR discord display name
+  source      String   // "site" | "discord"
+  content     String
+  createdAt   DateTime @default(now())
+}

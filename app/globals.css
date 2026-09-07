@@ -1,0 +1,20 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background-color: #14171F;
+  color: #EDE4D3;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+/* Hairline rule used inside parchment cards, evokes ruled ledger paper */
+.ledger-rule {
+  border-bottom: 1px solid #C9B78E;
+}
+
+/* Wax-seal style badge for the level number in the XP bar */
+.wax-seal {
+  box-shadow: 0 0 0 2px #B08D57, 0 2px 6px rgba(0,0,0,0.5);
+}

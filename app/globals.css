@@ -142,8 +142,12 @@
 /* The die stays fixed while its surrounding orbit system rotates. */
 .hero-sigil svg { position: relative; animation: none; transform: none; }
 .sigil-orbit-system { position: absolute; inset: 0; animation: sigil-revolve 36s linear infinite; transform-origin: center; }
+.hero-sigil > .sigil-orbit.inner { animation: sigil-revolve 28s linear infinite reverse; transform-origin: center; }
+.sigil-star { display: grid; place-items: center; width: 1.2em; height: 1.2em; line-height: 1; transform-origin: center; }
+.sigil-star.one { animation: sigil-revolve 6s linear infinite; }
+.sigil-star.two { animation: sigil-revolve 9s linear infinite reverse; }
 @keyframes sigil-revolve { from { transform: rotate(0); } to { transform: rotate(360deg); } }
-@media (prefers-reduced-motion: reduce) { .sigil-orbit-system { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .sigil-orbit-system, .hero-sigil > .sigil-orbit.inner, .sigil-star.one, .sigil-star.two { animation: none; } }
 @media (max-width: 700px) {
   .home-hero { padding-right: 76px; }
   .hero-sigil { display: grid; position: absolute; width: 108px; height: 108px; right: -20px; bottom: 20px; opacity: .45; pointer-events: none; }

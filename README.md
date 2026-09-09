@@ -137,7 +137,8 @@ por movimento reduzido. Sem dados de XP, nenhum progresso fictício é exibido.
 
 ### D20 e unidades de deslocamento
 
-O d20 da homepage gira suavemente, inclusive na versão móvel; a preferência
+O d20 da homepage fica estático, enquanto órbitas e estrelas giram ao redor
+dele, inclusive na versão móvel; a preferência
 por movimento reduzido desativa o giro. O campo Deslocamento oferece ft/m
 na ficha editável e na leitura do DM, com preferência local de unidade.
 Conversão física: 1 ft = 0,3048 m; 30 ft = 9,144 m. Alternar a unidade não salva

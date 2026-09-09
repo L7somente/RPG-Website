@@ -16,7 +16,7 @@ export const characterPatchSchema = z.object({
   strength: ability, dexterity: ability, constitution: ability,
   intelligence: ability, wisdom: ability, charisma: ability,
   inspiration: z.boolean(), initiative: bonus, maxHp: integer, currentHp: integer,
-  tempHp: integer, armorClass: integer, speed: integer, proficiencyBonus: bonus,
+  tempHp: integer, armorClass: integer, speed: z.number().finite().min(0).max(1000000), proficiencyBonus: bonus,
   hitDiceTotal: text, hitDiceUsed: integer,
   deathSaveSuccesses: z.number().int().min(0).max(3), deathSaveFailures: z.number().int().min(0).max(3),
   skillProficiencies: strings, skillExpertise: strings, savingThrowProfs: strings,

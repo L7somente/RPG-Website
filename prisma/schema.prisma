@@ -66,7 +66,7 @@ model Character {
   currentHp        Int      @default(10)
   tempHp           Int      @default(0)
   armorClass       Int      @default(10)
-  speed            Int      @default(30)
+  speed            Float    @default(30)
   proficiencyBonus Int      @default(2)
 
   hitDiceTotal       String @default("1d8")

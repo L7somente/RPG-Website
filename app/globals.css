@@ -138,3 +138,16 @@
 .session-tabs button[aria-selected=false]:hover { color: #e4e9f1; background: #ffffff06; }
 .app-content form.bg-ink-panel { border: 1px solid var(--edge); border-radius: 14px; }
 @media (max-width: 400px) { .world-level > span { max-width: 58px; overflow: hidden; text-overflow: ellipsis; } .session-tabs button { padding: 9px; font-size: .75rem; } }
+
+/* A gentle planar turn keeps the line-art die crisp without a 3D runtime. */
+.hero-sigil svg { animation: d20-turn 24s linear infinite; transform-origin: center; }
+.sigil-orbit.inner { animation: d20-orbit 48s linear infinite reverse; }
+@keyframes d20-turn { from { transform: rotate(-8deg); } to { transform: rotate(352deg); } }
+@keyframes d20-orbit { from { transform: rotate(22deg); } to { transform: rotate(382deg); } }
+@media (prefers-reduced-motion: reduce) { .hero-sigil svg, .sigil-orbit.inner { animation: none; } }
+@media (max-width: 700px) {
+  .home-hero { padding-right: 76px; }
+  .hero-sigil { display: grid; position: absolute; width: 108px; height: 108px; right: -20px; bottom: 20px; opacity: .45; pointer-events: none; }
+  .hero-sigil svg { width: 66px; height: 78px; }
+  .hero-sigil .sigil-star { display: none; }
+}

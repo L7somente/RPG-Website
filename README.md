@@ -134,3 +134,15 @@ Reinicie o bot atualizado, com permissão Gerenciar canais, para ativar o fluxo.
 O visual utiliza superfícies escuras translúcidas, navegação compacta e uma
 barra de XP de 8 px com ondas. A animação respeita a preferência do sistema
 por movimento reduzido. Sem dados de XP, nenhum progresso fictício é exibido.
+
+### D20 e unidades de deslocamento
+
+O d20 da homepage gira suavemente, inclusive na versão móvel; a preferência
+por movimento reduzido desativa o giro. O campo Deslocamento oferece ft/m
+na ficha editável e na leitura do DM, com preferência local de unidade.
+Conversão física: 1 ft = 0,3048 m; 30 ft = 9,144 m. Alternar a unidade não salva
+uma nova distância. Edições em metros são convertidas para pés, preservando
+frações no banco. Aplicar também a migração `20260909020000_fractional_speed`.
+
+O estudo de uma possível integração com Owlbear Rodeo está em
+[docs/OWLBEAR-INTEGRATION.md](docs/OWLBEAR-INTEGRATION.md).

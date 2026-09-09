@@ -1,6 +1,7 @@
 "use client";
 
 import { Character } from "./CharacterSheet";
+import SpeedField from "./SpeedField";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { ABILITY_KEYS, ABILITY_I18N_KEY, SKILLS, abilityModifier, formatModifier } from "@/lib/dnd-data";
 import { classById } from "@/lib/dnd-data/classes";
@@ -66,7 +67,7 @@ export default function DMCharacterView({
             {c.tempHp > 0 && <span className="text-xs text-verdant ml-1">+{c.tempHp} {t("temp")}</span>}
           </p>
         </div>
-        <ReadStat label={t("speed")} value={c.speed} suffix=" ft" />
+        <SpeedField feet={c.speed} />
         <ReadStat label={t("initiativeLabel")} value={c.initiative} />
         <ReadStat label={t("profBonus")} value={c.proficiencyBonus} prefix="+" />
       </div>

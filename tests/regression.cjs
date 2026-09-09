@@ -154,3 +154,14 @@ test('valid multiclass writes derive total level and proficiency inside a transa
   const response=await characters.PATCH(request({classes:[{id:'fighter',level:3},{id:'wizard',level:2}],proficiencyBonus:99}),params({id:'c'}));
   assert.equal(response.status,200);assert.equal(saved.level,5);assert.equal(saved.proficiencyBonus,3);
 });
+
+test('distance conversion supports exact metres, fractional edits and zero', () => {
+  const { displayDistance, distanceInFeet } = require('../lib/distance.ts');
+  assert.equal(displayDistance(30,'m'),9.144);
+  assert.equal(displayDistance(5,'m'),1.524);
+  assert.equal(distanceInFeet(9.144,'m'),30);
+  assert.equal(displayDistance(distanceInFeet(9,'m'),'m'),9);
+  assert.equal(displayDistance(0,'m'),0);
+  assert.equal(characterPatchSchema.safeParse({speed:distanceInFeet(9,'m')}).success,true);
+  for(const speed of [-1,NaN,Infinity,1000001]) assert.equal(characterPatchSchema.safeParse({speed}).success,false);
+});

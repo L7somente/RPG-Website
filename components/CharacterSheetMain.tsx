@@ -1,5 +1,6 @@
 "use client";
 
+import SpeedField from "./SpeedField";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { ABILITY_KEYS, ABILITY_I18N_KEY, SKILLS, abilityModifier, formatModifier } from "@/lib/dnd-data";
 import { classById, averageHpPerLevel } from "@/lib/dnd-data/classes";
@@ -103,7 +104,7 @@ export default function CharacterSheetMain({ sheet, save }: { sheet: Character; 
             className="w-10 text-center bg-transparent text-xs"
           />
         </div>
-        <Stat label={t("speed")} value={sheet.speed} onChange={(v) => save({ speed: v })} suffix=" ft" />
+        <SpeedField feet={sheet.speed} onChange={(speed) => save({ speed })} />
       </div>
 
       <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">

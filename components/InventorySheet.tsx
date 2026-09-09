@@ -60,20 +60,20 @@ export default function InventorySheet({
   }
 
   return (
-    <div className="rounded-lg bg-parchment text-parchmentText p-6 shadow-lg">
+    <div className="rounded-lg bg-ink-panel text-parchment p-6 shadow-lg">
       <div className="ledger-rule pb-2 mb-3 flex justify-between items-center">
         <h2 className="font-display text-xl">
           {t("inventory")}
-          {dmMode && <span className="text-sm font-body text-parchmentText/50"> {t("dmViewTag")}</span>}
+          {dmMode && <span className="text-sm font-body text-parchment/60"> {t("dmViewTag")}</span>}
         </h2>
-        <span className="font-mono text-xs text-parchmentText/60">
+        <span className="font-mono text-xs text-parchment/60">
           {totalWeight.toFixed(1)} lb {t("weightTotal")}
         </span>
       </div>
 
       <table className="w-full text-sm mb-4">
         <thead>
-          <tr className="text-left font-mono text-xs uppercase text-parchmentText/50 ledger-rule">
+          <tr className="text-left font-mono text-xs uppercase text-parchment/60 ledger-rule">
             <th className="py-1">{t("colItem")}</th>
             <th>{t("colType")}</th>
             <th>{t("colQty")}</th>
@@ -86,12 +86,12 @@ export default function InventorySheet({
           {items.map((item) => (
             <tr key={item.id} className="ledger-rule">
               <td className="py-1">{item.name}</td>
-              <td className="capitalize text-parchmentText/70">{item.itemType}</td>
+              <td className="capitalize text-parchment/70">{item.itemType}</td>
               <td>{item.quantity}</td>
               <td>{item.weight}</td>
               <td>
                 {dmMode ? (
-                  <span className="text-xs text-parchmentText/60">{item.equipped ? t("yes") : t("no")}</span>
+                  <span className="text-xs text-parchment/60">{item.equipped ? t("yes") : t("no")}</span>
                 ) : (
                   <input type="checkbox" checked={item.equipped} onChange={() => toggleEquipped(item)} />
                 )}
@@ -107,7 +107,7 @@ export default function InventorySheet({
           ))}
           {items.length === 0 && (
             <tr>
-              <td colSpan={6} className="py-2 text-parchmentText/50">
+              <td colSpan={6} className="py-2 text-parchment/60">
                 {t("noItemsYet")}
               </td>
             </tr>
@@ -120,12 +120,12 @@ export default function InventorySheet({
           placeholder={t("itemNamePlaceholder")}
           value={newItem.name}
           onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
-          className="flex-1 min-w-[140px] rounded border border-parchment-line bg-parchment-dim px-2 py-1 text-sm"
+          className="flex-1 min-w-[140px] rounded border border-white/10 bg-ink900 px-2 py-1 text-sm"
         />
         <select
           value={newItem.itemType}
           onChange={(e) => setNewItem({ ...newItem, itemType: e.target.value })}
-          className="rounded border border-parchment-line bg-parchment-dim px-2 py-1 text-sm"
+          className="rounded border border-white/10 bg-ink900 px-2 py-1 text-sm"
         >
           <option value="weapon">{t("weapon")}</option>
           <option value="armor">{t("armor")}</option>
@@ -137,7 +137,7 @@ export default function InventorySheet({
           min={1}
           value={newItem.quantity}
           onChange={(e) => setNewItem({ ...newItem, quantity: Number(e.target.value) })}
-          className="w-16 rounded border border-parchment-line bg-parchment-dim px-2 py-1 text-sm"
+          className="w-16 rounded border border-white/10 bg-ink900 px-2 py-1 text-sm"
         />
         <button type="submit" className="rounded bg-brass px-3 py-1 text-sm font-medium text-ink900 hover:bg-brass-bright">
           {t("add")}

@@ -6,7 +6,7 @@ import { useLanguage } from "@/lib/i18n/LanguageProvider";
 export default function AdminPanelHeader() {
   const { t } = useLanguage();
   return (
-    <header className="flex items-center justify-between">
+    <header className="flex flex-wrap gap-4 items-center justify-between">
       <div>
         <h1 className="font-display text-3xl text-brass-bright">{t("masterAdmin")}</h1>
         <p className="text-parchment/60 text-sm">{t("masterAdminSubtitle")}</p>

@@ -77,50 +77,32 @@ export default function CharactersPage() {
           <Link
             key={c.id}
             href={`/characters/${c.id}`}
-            className="rounded-lg bg-parchment text-parchmentText p-4 shadow-lg hover:-translate-y-0.5 transition-transform"
+            className="rounded-lg bg-ink-panel text-parchment p-4 shadow-lg hover:-translate-y-0.5 transition-transform"
           >
             <p className="font-display text-lg">{c.name}</p>
-            <p className="text-sm text-parchmentText/70">
+            <p className="text-sm text-parchment/70">
               {t("levelLabel")} {c.level} {c.race} {c.class}
             </p>
           </Link>
         ))}
 
-        {slotsLeft > 0 &&
-          Array.from({ length: slotsLeft }).map((_, i) =>
-            i === 0 ? (
-              <button
-                key="new"
-                onClick={() => setShowForm(true)}
-                className="rounded-lg border-2 border-dashed border-brass/50 p-4 text-brass hover:bg-ink-panel flex items-center justify-center min-h-[92px]"
-              >
-                {t("newCharacter")}
-              </button>
-            ) : (
-              <div
-                key={`empty-${i}`}
-                className="rounded-lg border-2 border-dashed border-parchment/10 min-h-[92px] flex items-center justify-center text-parchment/20 font-mono text-xs"
-              >
-                {t("emptySlot")}
-              </div>
-            )
-          )}
+        {slotsLeft > 0 && <button onClick={() => setShowForm(true)} className="rounded-xl border border-dashed border-brass/30 p-5 text-brass hover:bg-ink-panel flex items-center justify-center min-h-[92px]">+ {t("newCharacter")}</button>}
       </div>
 
       {showForm && (
-        <form onSubmit={createCharacter} className="mt-6 max-w-sm rounded-lg bg-parchment text-parchmentText p-4 space-y-3">
+        <form onSubmit={createCharacter} className="mt-6 max-w-sm rounded-lg bg-ink-panel text-parchment p-4 space-y-3">
           <input
             required
             placeholder={t("namePlaceholder")}
             value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
-            className="w-full rounded border border-parchment-line bg-parchment-dim px-3 py-2 text-sm"
+            className="w-full rounded border border-white/10 bg-ink900 px-3 py-2 text-sm"
           />
           <select
             required
             value={form.raceId}
             onChange={(e) => setForm({ ...form, raceId: e.target.value })}
-            className="w-full rounded border border-parchment-line bg-parchment-dim px-3 py-2 text-sm"
+            className="w-full rounded border border-white/10 bg-ink900 px-3 py-2 text-sm"
           >
             <option value="">{t("selectRacePlaceholder")}</option>
             {RACES.map((r) => (
@@ -133,7 +115,7 @@ export default function CharactersPage() {
             required
             value={form.classId}
             onChange={(e) => setForm({ ...form, classId: e.target.value })}
-            className="w-full rounded border border-parchment-line bg-parchment-dim px-3 py-2 text-sm"
+            className="w-full rounded border border-white/10 bg-ink900 px-3 py-2 text-sm"
           >
             <option value="">{t("selectClassPlaceholder")}</option>
             {CLASSES.map((c) => (

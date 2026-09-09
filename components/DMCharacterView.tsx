@@ -28,15 +28,15 @@ export default function DMCharacterView({
   const proficientSkills = SKILLS.filter((s) => c.skillProficiencies.includes(s.id) || c.skillExpertise.includes(s.id));
 
   return (
-    <div className="rounded-lg bg-parchment text-parchmentText p-6 shadow-lg space-y-5">
+    <div className="rounded-lg bg-ink-panel text-parchment p-6 shadow-lg space-y-5">
       <header className="ledger-rule pb-3">
         <h1 className="font-display text-2xl">{c.name}</h1>
-        <p className="text-sm text-parchmentText/70">
+        <p className="text-sm text-parchment/70">
           {t("levelLabel")} {c.level} {c.race} {c.class} · {c.alignment ?? "—"}
         </p>
-        <p className="text-xs font-mono text-parchmentText/50 mt-1">{t("playerLabel")}: {ownerUsername}</p>
+        <p className="text-xs font-mono text-parchment/60 mt-1">{t("playerLabel")}: {ownerUsername}</p>
         {Array.isArray(c.classes) && c.classes.length > 0 && (
-          <p className="text-xs text-parchmentText/50 mt-0.5">
+          <p className="text-xs text-parchment/60 mt-0.5">
             {c.classes.map((entry, i) => (
               <span key={i}>
                 {i > 0 && " / "}
@@ -49,8 +49,8 @@ export default function DMCharacterView({
 
       <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
         {ABILITY_KEYS.map((key) => (
-          <div key={key} className="rounded border border-parchment-line bg-parchment-dim text-center py-2">
-            <p className="font-mono text-xs uppercase text-parchmentText/60">{t(ABILITY_I18N_KEY[key])}</p>
+          <div key={key} className="rounded border border-white/10 bg-ink900 text-center py-2">
+            <p className="font-mono text-xs uppercase text-parchment/60">{t(ABILITY_I18N_KEY[key])}</p>
             <p className="font-display text-xl">{c[key]}</p>
             <p className="font-mono text-xs text-brass">{formatModifier(abilityModifier(c[key]))}</p>
           </div>
@@ -59,8 +59,8 @@ export default function DMCharacterView({
 
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
         <ReadStat label={t("armorClassLabel")} value={c.armorClass} />
-        <div className="rounded border border-parchment-line bg-parchment-dim px-3 py-2">
-          <p className="font-mono text-xs uppercase text-parchmentText/60">{t("hitPoints")}</p>
+        <div className="rounded border border-white/10 bg-ink900 px-3 py-2">
+          <p className="font-mono text-xs uppercase text-parchment/60">{t("hitPoints")}</p>
           <p className="font-display text-lg">
             <span className="text-crimson">{c.currentHp}</span> / {c.maxHp}
             {c.tempHp > 0 && <span className="text-xs text-verdant ml-1">+{c.tempHp} {t("temp")}</span>}
@@ -73,13 +73,13 @@ export default function DMCharacterView({
 
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-sm">
         <p>
-          <span className="text-parchmentText/60">{t("inspirationLabel")}:</span> {c.inspiration ? "★" : "—"}
+          <span className="text-parchment/60">{t("inspirationLabel")}:</span> {c.inspiration ? "★" : "—"}
         </p>
         <p>
-          <span className="text-parchmentText/60">{t("hitDiceLabel")}:</span> {c.hitDiceTotal} ({c.hitDiceUsed} {t("slotsUsedLabel").toLowerCase()})
+          <span className="text-parchment/60">{t("hitDiceLabel")}:</span> {c.hitDiceTotal} ({c.hitDiceUsed} {t("slotsUsedLabel").toLowerCase()})
         </p>
         <p>
-          <span className="text-parchmentText/60">{t("passivePerceptionLabel")}:</span> {passivePerception}
+          <span className="text-parchment/60">{t("passivePerceptionLabel")}:</span> {passivePerception}
         </p>
       </div>
 
@@ -161,8 +161,8 @@ export default function DMCharacterView({
 
 function ReadStat({ label, value, prefix = "", suffix = "" }: { label: string; value: number; prefix?: string; suffix?: string }) {
   return (
-    <div className="rounded border border-parchment-line bg-parchment-dim text-center py-2">
-      <p className="font-mono text-xs uppercase text-parchmentText/60">{label}</p>
+    <div className="rounded border border-white/10 bg-ink900 text-center py-2">
+      <p className="font-mono text-xs uppercase text-parchment/60">{label}</p>
       <p className="font-display text-lg">
         {prefix}
         {value}

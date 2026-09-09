@@ -1,5 +1,6 @@
 "use client";
 
+import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 
@@ -11,11 +12,14 @@ type TableSession = {
   scheduledAt: string;
   description?: string;
   discordEventId?: string | null;
+  createdBy: string;
   participants: Participant[];
 };
 
 export default function TableOrganizer() {
   const { t } = useLanguage();
+  const { data: auth } = useSession();
+  const [error, setError] = useState("");
   const [tables, setTables] = useState<TableSession[]>([]);
   const [players, setPlayers] = useState<Player[]>([]);
   const [form, setForm] = useState({ title: "", scheduledAt: "", description: "" });
@@ -25,7 +29,7 @@ export default function TableOrganizer() {
     const [tRes, pRes] = await Promise.all([fetch("/api/sessions"), fetch("/api/users/players")]);
     const tData = await tRes.json();
     const pData = await pRes.json();
-    setTables(tData.sessions ?? []);
+    setTables((tData.sessions ?? []).filter((s: any) => !s.endedAt));
     setPlayers(pData.players ?? []);
   }
 
@@ -36,17 +40,22 @@ export default function TableOrganizer() {
   async function createTable(e: React.FormEvent) {
     e.preventDefault();
     if (!form.title || !form.scheduledAt) return;
-    await fetch("/api/sessions", {
+    const response = await fetch("/api/sessions", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
+      body: JSON.stringify({ ...form, scheduledAt: new Date(form.scheduledAt).toISOString() }),
     });
+    const data = await response.json();
+    if (!response.ok) { setError(typeof data.error === "string" ? data.error : "Verifique o título e escolha um horário futuro."); return; }
+    setError(data.session?.discordSyncError ?? "");
     setForm({ title: "", scheduledAt: "", description: "" });
     load();
   }
 
   async function endTable(tableId: string) {
-    await fetch(`/api/sessions/${tableId}`, { method: "DELETE" });
+    const response = await fetch(`/api/sessions/${tableId}`, { method: "DELETE" });
+    const data = await response.json();
+    setError(response.ok ? data.session?.discordSyncError ?? "" : data.error);
     load();
   }
 
@@ -70,6 +79,8 @@ export default function TableOrganizer() {
     <section className="rounded-lg bg-ink-panel border border-brass/30 p-5">
       <h2 className="font-display text-lg text-brass-bright mb-3">{t("tableOrganization")}</h2>
 
+      {error && <p role="alert" className="text-crimson-bright mb-3">{error}</p>}
+      <a href="/sessions" className="inline-block underline text-brass mb-4">Sessões em andamento e histórico</a>
       <form onSubmit={createTable} className="flex flex-wrap gap-2 mb-4">
         <input
           placeholder={t("tableTitlePlaceholder")}
@@ -89,7 +100,7 @@ export default function TableOrganizer() {
       </form>
 
       <ul className="space-y-4">
-        {tables.map((tb) => (
+        {tables.filter(tb => (auth?.user as any)?.role === "ADMIN" || tb.createdBy === (auth?.user as any)?.id).map((tb) => (
           <li key={tb.id} className="border-l-2 border-brass/40 pl-3">
             <div className="flex items-center justify-between gap-2">
               <p className="font-medium">{tb.title}</p>
@@ -97,7 +108,7 @@ export default function TableOrganizer() {
                 {t("endTable")}
               </button>
             </div>
-            <p className="text-xs font-mono text-parchment/50">{new Date(tb.scheduledAt).toLocaleString()}</p>
+            <p className="text-xs font-mono text-parchment/60">{new Date(tb.scheduledAt).toLocaleString()}</p>
             {tb.discordEventId && (
               <a
                 href={`https://discord.com/events/${process.env.NEXT_PUBLIC_DISCORD_GUILD_ID}/${tb.discordEventId}`}

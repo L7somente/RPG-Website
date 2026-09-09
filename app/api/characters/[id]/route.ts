@@ -4,6 +4,8 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { apiError } from "@/lib/api-helpers";
 import { characterPatchSchema } from "@/lib/validation";
+import { serializable } from "@/lib/transaction";
+import { constrainedLevel } from "@/lib/world-level";
 
 async function assertOwnership(characterId: string, userId: string) {
   const character = await prisma.character.findUnique({ where: { id: characterId } });
@@ -40,11 +42,20 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     if (!owned) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
     const updates = characterPatchSchema.parse(await req.json());
-    const character = await prisma.character.update({
+    return await serializable(async (tx) => {
+    const latest = await tx.character.findUnique({ where: { id } });
+    if (!latest || latest.userId !== (session.user as any).id) return NextResponse.json({ error: "Not found" }, { status: 404 });
+    const world = await tx.globalXP.findUnique({ where: { id: 1 } });
+    const level = constrainedLevel(latest, updates, world?.currentLevel ?? 1);
+    if (level === null) return NextResponse.json({ error: "O nível total das classes deve respeitar o nível do mundo e corresponder ao nível da ficha." }, { status: 400 });
+    updates.level = level;
+    updates.proficiencyBonus = 2 + Math.floor((level - 1) / 4);
+    const character = await tx.character.update({
       where: { id, userId: (session.user as any).id },
       data: updates,
     });
     return NextResponse.json({ character });
+    });
   } catch (e) {
     return apiError(e);
   }

@@ -24,21 +24,21 @@ export default function PlayerCharacterList() {
   }, []);
 
   return (
-    <section className="rounded-lg bg-parchment text-parchmentText p-5 shadow-lg">
+    <section className="rounded-lg bg-ink-panel text-parchment p-5 shadow-lg">
       <h2 className="font-display text-lg mb-3">{t("playerCharacters")}</h2>
-      <p className="text-xs text-parchmentText/60 mb-3">{t("playerCharactersHint")}</p>
+      <p className="text-xs text-parchment/60 mb-3">{t("playerCharactersHint")}</p>
       <ul className="space-y-2">
-        {characters.length === 0 && <li className="text-sm text-parchmentText/60">{t("noCharactersCreatedYet")}</li>}
+        {characters.length === 0 && <li className="text-sm text-parchment/60">{t("noCharactersCreatedYet")}</li>}
         {characters.map((c) => (
           <li key={c.id}>
             <Link href={`/dm/characters/${c.id}`} className="flex justify-between items-center ledger-rule py-2 hover:text-brass">
               <span>
                 <span className="font-medium">{c.name}</span>{" "}
-                <span className="text-parchmentText/60 text-sm">
+                <span className="text-parchment/60 text-sm">
                   — {t("levelLabel")} {c.level} {c.race} {c.class}
                 </span>
               </span>
-              <span className="text-xs font-mono text-parchmentText/50">{c.user.username}</span>
+              <span className="text-xs font-mono text-parchment/60">{c.user.username}</span>
             </Link>
           </li>
         ))}

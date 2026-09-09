@@ -57,11 +57,11 @@ export default function QuestBoard() {
   const myId = (authSession?.user as any)?.id;
 
   return (
-    <section className="rounded-lg bg-parchment text-parchmentText p-5 shadow-lg">
+    <section className="rounded-lg bg-ink-panel text-parchment p-5 shadow-lg">
       <h2 className="font-display text-lg tracking-wide mb-1">{t("questBoard")}</h2>
-      <p className="text-xs text-parchmentText/60 mb-3">{t("questBoardHint")}</p>
+      <p className="text-xs text-parchment/60 mb-3">{t("questBoardHint")}</p>
 
-      {byDM.size === 0 && <p className="text-sm text-parchmentText/60">{t("noQuestsAvailable")}</p>}
+      {byDM.size === 0 && <p className="text-sm text-parchment/60">{t("noQuestsAvailable")}</p>}
 
       <div className="space-y-5">
         {[...byDM.entries()].map(([dmId, group]) => (
@@ -82,7 +82,7 @@ export default function QuestBoard() {
                             {q.status === "active" ? t("statusActive") : t("statusAvailable")}
                           </span>
                         </p>
-                        <p className="text-sm text-parchmentText/70">{q.description}</p>
+                        <p className="text-sm text-parchment/70">{q.description}</p>
                       </div>
                       <span className="shrink-0 font-mono text-xs text-verdant">+{q.xpReward} XP</span>
                     </div>
@@ -92,13 +92,13 @@ export default function QuestBoard() {
                         onClick={() => toggleVote(q.id)}
                         disabled={!authSession}
                         className={`text-xs rounded-full px-3 py-1 font-medium ${
-                          iVoted ? "bg-brass text-ink900" : "bg-parchment-dim text-parchmentText/70 hover:bg-parchment-line"
+                          iVoted ? "bg-brass text-ink900" : "bg-ink900 text-parchment/70 hover:bg-white/10"
                         }`}
                       >
                         {iVoted ? `✓ ${t("voted")}` : t("vote")} ({q.votes.length})
                       </button>
                       {q.votes.length > 0 && (
-                        <span className="text-xs text-parchmentText/50">
+                        <span className="text-xs text-parchment/60">
                           {q.votes.map((v) => v.user.username).join(", ")}
                         </span>
                       )}

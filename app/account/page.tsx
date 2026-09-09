@@ -42,18 +42,18 @@ export default function AccountPage() {
       </div>
 
       {account && (
-        <p className="text-xs font-mono text-parchment/50">
+        <p className="text-xs font-mono text-parchment/60">
           {t("role")}: {account.role}
         </p>
       )}
 
-      <form onSubmit={saveUsername} className="rounded-lg bg-parchment text-parchmentText p-5 shadow-lg space-y-3">
+      <form onSubmit={saveUsername} className="rounded-lg bg-ink-panel text-parchment p-5 shadow-lg space-y-3">
         <label className="text-xs font-mono uppercase tracking-wide block">{t("username")}</label>
-        <p className="text-xs text-parchmentText/60">{t("usernameChatNotice")}</p>
+        <p className="text-xs text-parchment/60">{t("usernameChatNotice")}</p>
         <input
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          className="w-full rounded border border-parchment-line bg-parchment-dim px-3 py-2 text-sm"
+          className="w-full rounded border border-white/10 bg-ink900 px-3 py-2 text-sm"
         />
         {usernameMsg && <p className="text-sm text-verdant">{usernameMsg}</p>}
         <button type="submit" className="rounded bg-brass px-4 py-2 text-sm font-medium text-ink900 hover:bg-brass-bright">

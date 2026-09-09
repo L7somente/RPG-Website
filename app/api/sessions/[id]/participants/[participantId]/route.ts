@@ -2,9 +2,9 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { isDM } from "@/lib/roles";
+import { isAdmin } from "@/lib/roles";
 import { apiError } from "@/lib/api-helpers";
-import { syncDiscordVoiceChannelAccess } from "@/lib/discord";
+import { syncSession } from "@/server/session-sync";
 
 export async function DELETE(
   _req: Request,
@@ -18,29 +18,17 @@ export async function DELETE(
     const participant = await prisma.sessionParticipant.findUnique({ where: { id: participantId } });
     if (!participant) return NextResponse.json({ ok: true });
 
+    if (participant.sessionId !== id) return NextResponse.json({ error: "Not found" }, { status: 404 });
+    const table = await prisma.gameSession.findUnique({ where: { id } });
+    if (!table || table.endedAt) return NextResponse.json({ error: "Sessão encerrada ou inexistente." }, { status: 409 });
     const requesterId = (session.user as any).id;
-    if (!isDM(session) && participant.userId !== requesterId) {
+    if (!isAdmin(session) && table.createdBy !== requesterId && participant.userId !== requesterId) {
       return NextResponse.json({ error: "You can only remove your own signup" }, { status: 403 });
     }
 
     await prisma.sessionParticipant.delete({ where: { id: participantId } });
 
-    const gameSession = await prisma.gameSession.findUnique({
-      where: { id },
-      include: { participants: { include: { user: { select: { discordId: true } } } } },
-    });
-    if (gameSession?.discordVoiceChannelId) {
-      const [creator, admins] = await Promise.all([
-        prisma.user.findUnique({ where: { id: gameSession.createdBy }, select: { discordId: true } }),
-        prisma.user.findMany({ where: { role: "ADMIN" }, select: { discordId: true } }),
-      ]);
-      const allowedDiscordIds = [
-        creator?.discordId,
-        ...admins.map((a) => a.discordId),
-        ...gameSession.participants.map((p) => p.user.discordId),
-      ].filter((val): val is string => Boolean(val));
-      await syncDiscordVoiceChannelAccess(gameSession.discordVoiceChannelId, allowedDiscordIds);
-    }
+    await syncSession(prisma, id);
 
     return NextResponse.json({ ok: true });
   } catch (e) {

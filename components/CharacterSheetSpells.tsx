@@ -40,45 +40,45 @@ export default function CharacterSheetSpells({ sheet, save }: { sheet: Character
     <div className="space-y-5">
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div>
-          <label className="text-[10px] font-mono uppercase text-parchmentText/60 block mb-0.5">
+          <label className="text-xs font-mono uppercase text-parchment/60 block mb-0.5">
             {t("spellcastingClassLabel")}
           </label>
           <input
             defaultValue={sheet.spellcastingClass}
             onBlur={(e) => save({ spellcastingClass: e.target.value })}
-            className="w-full rounded border border-parchment-line bg-parchment-dim px-2 py-1 text-sm"
+            className="w-full rounded border border-white/10 bg-ink900 px-2 py-1 text-sm"
           />
         </div>
         <div>
-          <label className="text-[10px] font-mono uppercase text-parchmentText/60 block mb-0.5">
+          <label className="text-xs font-mono uppercase text-parchment/60 block mb-0.5">
             {t("spellcastingAbilityLabel")}
           </label>
           <input
             defaultValue={sheet.spellcastingAbility}
             onBlur={(e) => save({ spellcastingAbility: e.target.value })}
-            className="w-full rounded border border-parchment-line bg-parchment-dim px-2 py-1 text-sm"
+            className="w-full rounded border border-white/10 bg-ink900 px-2 py-1 text-sm"
           />
         </div>
         <div>
-          <label className="text-[10px] font-mono uppercase text-parchmentText/60 block mb-0.5">
+          <label className="text-xs font-mono uppercase text-parchment/60 block mb-0.5">
             {t("spellSaveDCLabel")}
           </label>
           <input
             type="number"
             value={sheet.spellSaveDC}
             onChange={(e) => save({ spellSaveDC: Number(e.target.value) })}
-            className="w-full rounded border border-parchment-line bg-parchment-dim px-2 py-1 text-sm"
+            className="w-full rounded border border-white/10 bg-ink900 px-2 py-1 text-sm"
           />
         </div>
         <div>
-          <label className="text-[10px] font-mono uppercase text-parchmentText/60 block mb-0.5">
+          <label className="text-xs font-mono uppercase text-parchment/60 block mb-0.5">
             {t("spellAttackBonusLabel")}
           </label>
           <input
             type="number"
             value={sheet.spellAttackBonus}
             onChange={(e) => save({ spellAttackBonus: Number(e.target.value) })}
-            className="w-full rounded border border-parchment-line bg-parchment-dim px-2 py-1 text-sm"
+            className="w-full rounded border border-white/10 bg-ink900 px-2 py-1 text-sm"
           />
         </div>
       </div>
@@ -93,7 +93,7 @@ export default function CharacterSheetSpells({ sheet, save }: { sheet: Character
       )}
 
       {/* Cantrips */}
-      <div className="rounded border border-parchment-line bg-parchment-dim p-3">
+      <div className="rounded border border-white/10 bg-ink900 p-3">
         <h3 className="font-display text-sm mb-2">{t("cantripsLabel")}</h3>
         <div className="space-y-1">
           {cantrips.map((s) => (
@@ -102,7 +102,7 @@ export default function CharacterSheetSpells({ sheet, save }: { sheet: Character
                 value={s.name}
                 onChange={(e) => updateSpell(s.i, { name: e.target.value })}
                 placeholder={t("spellNamePlaceholder")}
-                className="flex-1 rounded border border-parchment-line bg-parchment px-2 py-1 text-sm"
+                className="flex-1 rounded border border-white/10 bg-ink-panel px-2 py-1 text-sm"
               />
               <button onClick={() => removeSpell(s.i)} className="text-crimson text-xs px-1">
                 ×
@@ -121,18 +121,18 @@ export default function CharacterSheetSpells({ sheet, save }: { sheet: Character
           const slots = sheet.spellSlots[String(level)] ?? { max: 0, used: 0 };
           const spells = sheet.spellsKnown.map((s, i) => ({ ...s, i })).filter((s) => s.level === level);
           return (
-            <div key={level} className="rounded border border-parchment-line bg-parchment-dim p-3">
+            <div key={level} className="rounded border border-white/10 bg-ink900 p-3">
               <div className="flex items-center justify-between mb-1">
                 <h4 className="font-display text-sm">
                   {t("spellLevelLabel")} {level}
                 </h4>
-                <div className="flex items-center gap-1 text-[10px] font-mono text-parchmentText/60">
+                <div className="flex items-center gap-1 text-xs font-mono text-parchment/60">
                   <input
                     type="number"
                     min={0}
                     value={slots.max}
                     onChange={(e) => updateSlots(level, { max: Number(e.target.value) })}
-                    className="w-8 bg-transparent text-center border-b border-parchment-line"
+                    className="w-8 bg-transparent text-center border-b border-white/10"
                     title={t("slotsTotalLabel")}
                   />
                   /
@@ -141,7 +141,7 @@ export default function CharacterSheetSpells({ sheet, save }: { sheet: Character
                     min={0}
                     value={slots.used}
                     onChange={(e) => updateSlots(level, { used: Number(e.target.value) })}
-                    className="w-8 bg-transparent text-center border-b border-parchment-line"
+                    className="w-8 bg-transparent text-center border-b border-white/10"
                     title={t("slotsUsedLabel")}
                   />
                 </div>
@@ -159,7 +159,7 @@ export default function CharacterSheetSpells({ sheet, save }: { sheet: Character
                       value={s.name}
                       onChange={(e) => updateSpell(s.i, { name: e.target.value })}
                       placeholder={t("spellNamePlaceholder")}
-                      className="flex-1 rounded border border-parchment-line bg-parchment px-2 py-0.5 text-xs"
+                      className="flex-1 rounded border border-white/10 bg-ink-panel px-2 py-0.5 text-xs"
                     />
                     <button onClick={() => removeSpell(s.i)} className="text-crimson text-xs px-1">
                       ×
@@ -167,7 +167,7 @@ export default function CharacterSheetSpells({ sheet, save }: { sheet: Character
                   </div>
                 ))}
               </div>
-              <button onClick={() => addSpell(level)} className="mt-1.5 text-[11px] text-brass hover:text-brass-bright">
+              <button onClick={() => addSpell(level)} className="mt-1.5 text-xs text-brass hover:text-brass-bright">
                 {t("addSpell")}
               </button>
             </div>

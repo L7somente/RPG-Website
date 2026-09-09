@@ -115,3 +115,42 @@ test('serialization conflicts retry and XP rolls across levels', async () => {
   assert.equal(result.currentLevel, 3); assert.equal(result.currentXP, 50); assert.equal(calls, 2);
   await assert.rejects(() => awardXP(-1)); await assert.rejects(() => awardXP(1.5));
 });
+
+test('world cap rejects direct levels, multiclass totals and mismatched summaries', async () => {
+  const { constrainedLevel } = require('../lib/world-level.ts');
+  const current = {level: 2, classes: [{id:'fighter',level:2}]};
+  assert.equal(constrainedLevel(current,{level:8},3),null);
+  assert.equal(constrainedLevel(current,{classes:[{id:'fighter',level:2},{id:'wizard',level:2}]},3),null);
+  assert.equal(constrainedLevel(current,{classes:[{id:'fighter',level:2},{id:'wizard',level:1}],level:3},3),3);
+  prisma.character = {findUnique:async()=>({...current,userId:'owner'}),update:()=>assert.fail('must not write')};
+  prisma.globalXP = {findUnique:async()=>({currentLevel:3})};
+  prisma.$transaction = async callback => callback(prisma);
+  assert.equal((await characters.PATCH(request({classes:[{id:'wizard',level:4}]}),params({id:'c'}))).status,400);
+});
+
+test('only the assigned DM or an admin can end a game session', async () => {
+  const routes = require('../app/api/sessions/[id]/route.ts');
+  prisma.gameSession = { findUnique: async () => ({id:'s',createdBy:'another-dm'}), updateMany: () => assert.fail('must not write') };
+  assert.equal((await routes.PATCH(request({action:'end'}),params({id:'s'}))).status,403);
+  session = {user:{id:'another-dm',role:'PLAYER'}};
+  assert.equal((await routes.PATCH(request({action:'end'}),params({id:'s'}))).status,403);
+});
+test('ending preserves the game session even when Discord is unconfigured', async () => {
+  const routes = require('../app/api/sessions/[id]/route.ts');
+  let row = {id:'s',createdBy:'owner',endedAt:null};
+  prisma.gameSession = {
+    findUnique:async()=>row,
+    updateMany:async({data})=>{if(data.endedAt)row={...row,...data};return {count:0};},
+    delete:()=>assert.fail('history must remain')
+  };
+  // A synchronizer already holds the lease, so the DM must retry instead of racing it.
+  assert.equal((await routes.PATCH(request({action:'end'}),params({id:'s'}))).status,409);
+});
+test('valid multiclass writes derive total level and proficiency inside a transaction',async()=>{
+  let saved;
+  prisma.character={findUnique:async()=>({userId:'owner',level:1,classes:[{id:'fighter',level:1}]}),update:async({data})=>(saved=data)};
+  prisma.globalXP={findUnique:async()=>({currentLevel:5})};
+  prisma.$transaction=async callback=>callback(prisma);
+  const response=await characters.PATCH(request({classes:[{id:'fighter',level:3},{id:'wizard',level:2}],proficiencyBonus:99}),params({id:'c'}));
+  assert.equal(response.status,200);assert.equal(saved.level,5);assert.equal(saved.proficiencyBonus,3);
+});

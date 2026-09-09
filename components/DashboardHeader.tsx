@@ -7,12 +7,12 @@ export default function DashboardHeader({ showAdmin, showDM }: { showAdmin: bool
   const { t } = useLanguage();
 
   return (
-    <header className="flex items-center justify-between">
+    <header className="flex flex-wrap gap-4 items-center justify-between">
       <div>
         <h1 className="font-display text-3xl text-brass-bright">The Ledger</h1>
         <p className="text-parchment/60 text-sm">{t("campaignDashboard")}</p>
       </div>
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
         {showAdmin && (
           <Link href="/admin" className="rounded bg-crimson px-4 py-2 text-sm font-medium text-parchment hover:bg-crimson-bright">
             {t("adminPanel")}

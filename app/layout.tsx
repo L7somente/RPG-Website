@@ -14,10 +14,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="pt-BR">
       <body className="min-h-screen bg-ink font-body text-parchment">
         <Providers>
-          {/* Sticky on every page per requirement #3 */}
+          <a href="#main-content" className="skip-link">Pular para o conteúdo</a>
           <XPBar />
           <Sidebar />
-          <main className="mx-auto max-w-5xl px-4 py-6 sm:pl-20 pb-20 sm:pb-6">{children}</main>
+          <main id="main-content" className="app-content">{children}</main>
         </Providers>
       </body>
     </html>

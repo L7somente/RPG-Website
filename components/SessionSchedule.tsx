@@ -26,7 +26,7 @@ export default function SessionSchedule() {
     if (authSession) requests.push(fetch("/api/characters"));
     const [sRes, cRes] = await Promise.all(requests);
     const sData = await sRes.json();
-    setSessions(sData.sessions ?? []);
+    setSessions((sData.sessions ?? []).filter((s: any) => s.status === "scheduled"));
     if (cRes) {
       const cData = await cRes.json();
       setMyCharacters(cData.characters ?? []);
@@ -79,7 +79,7 @@ export default function SessionSchedule() {
                   <p className="font-medium">{s.title}</p>
                   {s.description && <p className="text-sm text-parchment/70">{s.description}</p>}
                   {s.participants.length > 0 && (
-                    <p className="text-xs text-parchment/50">
+                    <p className="text-xs text-parchment/60">
                       {t("confirmed")}: {s.participants.map((p) => p.user.username).join(", ")}
                     </p>
                   )}
@@ -98,7 +98,7 @@ export default function SessionSchedule() {
                       </button>
                     </div>
                   ) : myCharacters.length === 0 ? (
-                    <p className="text-xs text-parchment/40">{t("createCharacterToJoin")}</p>
+                    <p className="text-xs text-parchment/60">{t("createCharacterToJoin")}</p>
                   ) : (
                     <div className="flex items-center gap-2">
                       <select

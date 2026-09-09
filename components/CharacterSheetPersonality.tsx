@@ -21,7 +21,7 @@ function Field({
         defaultValue={defaultValue}
         onBlur={(e) => onBlur(e.target.value)}
         rows={rows}
-        className="w-full rounded border border-parchment-line bg-parchment-dim px-3 py-2 text-sm"
+        className="w-full rounded border border-white/10 bg-ink900 px-3 py-2 text-sm"
       />
     </div>
   );
@@ -55,11 +55,11 @@ export default function CharacterSheetPersonality({ sheet, save }: { sheet: Char
             ] as const
           ).map(([field, labelKey]) => (
             <div key={field}>
-              <label className="text-[10px] font-mono uppercase text-parchmentText/60 block mb-0.5">{t(labelKey)}</label>
+              <label className="text-xs font-mono uppercase text-parchment/60 block mb-0.5">{t(labelKey)}</label>
               <input
                 defaultValue={sheet[field]}
                 onBlur={(e) => save({ [field]: e.target.value } as Partial<Character>)}
-                className="w-full rounded border border-parchment-line bg-parchment-dim px-2 py-1 text-sm"
+                className="w-full rounded border border-white/10 bg-ink900 px-2 py-1 text-sm"
               />
             </div>
           ))}
@@ -81,7 +81,7 @@ export default function CharacterSheetPersonality({ sheet, save }: { sheet: Char
             defaultValue={sheet.characterSymbol}
             onBlur={(e) => save({ characterSymbol: e.target.value })}
             placeholder={t("symbolLabel")}
-            className="w-full rounded border border-parchment-line bg-parchment-dim px-3 py-2 text-sm"
+            className="w-full rounded border border-white/10 bg-ink900 px-3 py-2 text-sm"
           />
         </div>
       </div>

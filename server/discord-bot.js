@@ -18,6 +18,7 @@ const { io } = require("socket.io-client");
 const { PrismaClient } = require("@prisma/client");
 
 const prisma = new PrismaClient();
+require("./session-sync").startSessionSync(prisma);
 if (!process.env.SOCKET_SERVER_SECRET || process.env.SOCKET_SERVER_SECRET.length < 32) throw new Error("Configure SOCKET_SERVER_SECRET");
 const socket = io(process.env.SOCKET_SERVER_URL || process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:4000", {
   auth: { secret: process.env.SOCKET_SERVER_SECRET },
@@ -26,6 +27,7 @@ const socket = io(process.env.SOCKET_SERVER_URL || process.env.NEXT_PUBLIC_SOCKE
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildScheduledEvents,
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent,
   ],
@@ -67,4 +69,16 @@ socket.on("chat-message", (msg) => {
   }
 });
 
+// Immediate cleanup on Discord changes; the periodic worker recovers missed events.
+async function syncChangedEvent(event) {
+  if (event.guildId !== process.env.DISCORD_GUILD_ID) return;
+  try {
+    const sessions = await prisma.gameSession.findMany({ where: { discordEventId: event.id } });
+    for (const session of sessions) await require('./session-sync').syncSession(prisma, session.id);
+  } catch (error) { console.error('Scheduled event sync failed:', error.message); }
+}
+client.on('guildScheduledEventUpdate', (_oldEvent, event) => {
+  if (event.status === 3 || event.status === 4) void syncChangedEvent(event);
+});
+client.on('guildScheduledEventDelete', event => void syncChangedEvent(event));
 client.login(process.env.DISCORD_BOT_TOKEN);

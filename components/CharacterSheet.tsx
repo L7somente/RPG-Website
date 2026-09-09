@@ -138,7 +138,7 @@ export default function CharacterSheet({ character }: { character: Character }) 
   }, []);
 
   return (
-    <div className="rounded-lg bg-parchment text-parchmentText p-6 shadow-lg space-y-5">
+    <div className="rounded-lg bg-ink-panel text-parchment p-6 shadow-lg space-y-5">
       {saveError && <div role="alert" className="text-crimson">
         Não foi possível salvar. Suas alterações ainda estão pendentes. Não saia desta página.
         <button className="ml-2 underline" onClick={() => void flush()}>Tentar novamente</button>
@@ -146,23 +146,23 @@ export default function CharacterSheet({ character }: { character: Character }) 
       <header className="ledger-rule pb-3 flex justify-between items-start">
         <div>
           <h1 className="font-display text-2xl">{sheet.name}</h1>
-          <p className="text-sm text-parchmentText/70">
+          <p className="text-sm text-parchment/70">
             {t("levelLabel")} {sheet.level} {sheet.race} {sheet.class} · {sheet.alignment ?? "—"}
           </p>
-          <p className="text-xs text-parchmentText/50 mt-0.5">
+          <p className="text-xs text-parchment/60 mt-0.5">
             {t("backgroundLabel")}: {sheet.background ?? "—"} · {t("playerNameLabel")}: {sheet.playerName || "—"}
           </p>
         </div>
         {saving && <span className="text-xs font-mono text-brass shrink-0">{t("saving")}</span>}
       </header>
 
-      <div className="flex gap-1 border-b border-parchment-line overflow-x-auto">
+      <div className="flex gap-1 border-b border-white/10 overflow-x-auto">
         {TABS.map((tb) => (
           <button
             key={tb}
             onClick={() => setTab(tb)}
             className={`px-3 py-2 text-sm font-medium whitespace-nowrap ${
-              tab === tb ? "border-b-2 border-brass text-brass" : "text-parchmentText/50 hover:text-parchmentText"
+              tab === tb ? "border-b-2 border-brass text-brass" : "text-parchment/60 hover:text-parchment"
             }`}
           >
             {t(TAB_I18N[tb])}

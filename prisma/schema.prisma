@@ -191,6 +191,10 @@ model QuestVote {
 
 model GameSession {
   id                    String   @id @default(cuid())
+  endedAt               DateTime?
+  discordSyncError      String?
+  discordSyncedAt       DateTime?
+  syncLockedUntil       DateTime?
   title                 String
   scheduledAt           DateTime
   description           String?

@@ -82,3 +82,55 @@ isolamento do chat e rejeição de mensagens forjadas. A integração com um
 PostgreSQL real e o OAuth/bot Discord requer as credenciais do ambiente.
 
 Não distribua `.env`, `node_modules` ou `.next` em pacotes do projeto.
+
+## Homepage, níveis e sessões
+
+- `/` é a homepage; o mural anterior continua em `/dashboard`.
+- `/sessions` reúne Em andamento, Agendadas e Encerradas. O horário de início
+  coloca a sessão em andamento; apenas o DM responsável ou ADMIN a encerra.
+- O nível do mundo é o teto das fichas, inclusive a soma de multiclasses,
+  até nível 20. A API valida e recalcula nível/proficiência na mesma transação.
+  Fichas legadas acima do teto precisam redistribuir seus níveis antes de salvar.
+- O encerramento preserva a sessão e participantes no histórico, conclui um
+  evento ativo (ou cancela um agendado) e remove a sala temporária no Discord.
+- O bot verifica as sessões a cada 30 segundos, cria recursos pendentes, inicia
+  eventos no horário e repete sincronizações que falharam. O site também tenta
+  sincronizar imediatamente após criar ou encerrar uma sessão.
+- Falhas aparecem no painel de sessões, com tentativa manual. Uma reserva
+  temporária no banco impede sincronizadores concorrentes; recursos criados
+  parcialmente são reutilizados quando possível.
+
+### Aplicar esta atualização
+
+1. Configure `DATABASE_URL`, OAuth/NextAuth, `DISCORD_BOT_TOKEN`,
+   `DISCORD_GUILD_ID` e o segredo dos sockets no ambiente do servidor.
+2. Execute `npx prisma migrate deploy` e `npx prisma generate`.
+3. Compile e reinicie o site, o servidor de sockets e o bot (`npm run bot`).
+4. O bot precisa de Gerenciar canais, Gerenciar eventos, Ver canais e Conectar.
+   Para o chat, mantenha também suas permissões e intents existentes.
+5. Como DM, agende uma mesa alguns minutos à frente, confirme o evento e a
+   sala privada, aguarde o início e encerre pelo site. Confira o histórico,
+   a conclusão do evento e a remoção da sala. Simule uma falha de permissão
+   e use Sincronizar Discord após restaurá-la para conferir a recuperação.
+
+O Discord pode concluir eventos de voz automaticamente quando a sala fica
+vazia; a sessão no site continua aberta até o DM encerrá-la. A duração é
+uma estimativa, não encerra a mesa no site.
+Referência: https://docs.discord.com/developers/resources/guild-scheduled-event
+
+Os testes de sincronização usam respostas simuladas: não criam nem apagam
+recursos reais. A validação em produção requer o banco e o bot configurados.
+
+### Exclusão automática de salas e atualização visual
+
+A sala temporária é excluída ao encerrar pelo site e também quando o evento
+correspondente é concluído, cancelado ou removido no Discord. O bot escuta
+essas mudanças e o verificador de 30 segundos recupera notificações perdidas.
+O identificador da sala só é limpo após a exclusão ser confirmada (ou 404);
+falhas mantêm a pendência para nova tentativa. O evento permanece associado
+à sessão para evitar recriar a sala. A sessão no site ainda é encerrada pelo DM.
+Reinicie o bot atualizado, com permissão Gerenciar canais, para ativar o fluxo.
+
+O visual utiliza superfícies escuras translúcidas, navegação compacta e uma
+barra de XP de 8 px com ondas. A animação respeita a preferência do sistema
+por movimento reduzido. Sem dados de XP, nenhum progresso fictício é exibido.

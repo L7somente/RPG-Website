@@ -53,27 +53,27 @@ export default function CharacterSheetMain({ sheet, save }: { sheet: Character; 
     <div className="space-y-5">
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div>
-          <label className="text-[10px] font-mono uppercase text-parchmentText/60 block mb-0.5">{t("playerNameLabel")}</label>
+          <label className="text-xs font-mono uppercase text-parchment/60 block mb-0.5">{t("playerNameLabel")}</label>
           <input
             defaultValue={sheet.playerName}
             onBlur={(e) => save({ playerName: e.target.value })}
-            className="w-full rounded border border-parchment-line bg-parchment-dim px-2 py-1 text-sm"
+            className="w-full rounded border border-white/10 bg-ink900 px-2 py-1 text-sm"
           />
         </div>
         <div>
-          <label className="text-[10px] font-mono uppercase text-parchmentText/60 block mb-0.5">{t("backgroundLabel")}</label>
+          <label className="text-xs font-mono uppercase text-parchment/60 block mb-0.5">{t("backgroundLabel")}</label>
           <input
             defaultValue={sheet.background ?? ""}
             onBlur={(e) => save({ background: e.target.value })}
-            className="w-full rounded border border-parchment-line bg-parchment-dim px-2 py-1 text-sm"
+            className="w-full rounded border border-white/10 bg-ink900 px-2 py-1 text-sm"
           />
         </div>
         <div>
-          <label className="text-[10px] font-mono uppercase text-parchmentText/60 block mb-0.5">{t("alignmentLabel")}</label>
+          <label className="text-xs font-mono uppercase text-parchment/60 block mb-0.5">{t("alignmentLabel")}</label>
           <input
             defaultValue={sheet.alignment ?? ""}
             onBlur={(e) => save({ alignment: e.target.value })}
-            className="w-full rounded border border-parchment-line bg-parchment-dim px-2 py-1 text-sm"
+            className="w-full rounded border border-white/10 bg-ink900 px-2 py-1 text-sm"
           />
         </div>
       </div>
@@ -81,8 +81,8 @@ export default function CharacterSheetMain({ sheet, save }: { sheet: Character; 
       <MulticlassEditor sheet={sheet} save={save} />
 
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-        <div className="rounded border border-parchment-line bg-parchment-dim text-center py-2 flex flex-col items-center justify-center gap-1">
-          <p className="font-mono text-xs uppercase text-parchmentText/60">{t("inspirationLabel")}</p>
+        <div className="rounded border border-white/10 bg-ink900 text-center py-2 flex flex-col items-center justify-center gap-1">
+          <p className="font-mono text-xs uppercase text-parchment/60">{t("inspirationLabel")}</p>
           <input
             type="checkbox"
             checked={sheet.inspiration}
@@ -92,10 +92,10 @@ export default function CharacterSheetMain({ sheet, save }: { sheet: Character; 
         </div>
         <Stat label={t("profBonus")} value={sheet.proficiencyBonus} onChange={(v) => save({ proficiencyBonus: v })} prefix="+" />
         <Stat label={t("armorClassLabel")} value={sheet.armorClass} onChange={(v) => save({ armorClass: v })} />
-        <div className="rounded border border-parchment-line bg-parchment-dim text-center py-2">
-          <p className="font-mono text-xs uppercase text-parchmentText/60">{t("initiativeLabel")}</p>
+        <div className="rounded border border-white/10 bg-ink900 text-center py-2">
+          <p className="font-mono text-xs uppercase text-parchment/60">{t("initiativeLabel")}</p>
           <p className="font-display text-lg text-brass">{formatModifier(totalInitiative)}</p>
-          <label className="text-[9px] font-mono text-parchmentText/50 block">{t("otherInitiativeBonusLabel")}</label>
+          <label className="text-[9px] font-mono text-parchment/60 block">{t("otherInitiativeBonusLabel")}</label>
           <input
             type="number"
             value={sheet.initiative}
@@ -108,8 +108,8 @@ export default function CharacterSheetMain({ sheet, save }: { sheet: Character; 
 
       <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
         {ABILITY_KEYS.map((key) => (
-          <div key={key} className="rounded border border-parchment-line bg-parchment-dim text-center py-2">
-            <p className="font-mono text-xs uppercase text-parchmentText/60">{t(ABILITY_I18N_KEY[key])}</p>
+          <div key={key} className="rounded border border-white/10 bg-ink900 text-center py-2">
+            <p className="font-mono text-xs uppercase text-parchment/60">{t(ABILITY_I18N_KEY[key])}</p>
             <input
               type="number"
               value={sheet[key]}
@@ -122,8 +122,8 @@ export default function CharacterSheetMain({ sheet, save }: { sheet: Character; 
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-        <div className="rounded border border-parchment-line bg-parchment-dim px-3 py-2 col-span-2 sm:col-span-1">
-          <p className="font-mono text-xs uppercase text-parchmentText/60">{t("hitPoints")}</p>
+        <div className="rounded border border-white/10 bg-ink900 px-3 py-2 col-span-2 sm:col-span-1">
+          <p className="font-mono text-xs uppercase text-parchment/60">{t("hitPoints")}</p>
           <div className="flex items-center gap-1 font-display text-lg">
             <input
               type="number"
@@ -143,15 +143,15 @@ export default function CharacterSheetMain({ sheet, save }: { sheet: Character; 
           {suggestedMaxHp > 0 && suggestedMaxHp !== sheet.maxHp && (
             <button
               onClick={() => save({ maxHp: suggestedMaxHp, currentHp: suggestedMaxHp })}
-              className="text-[10px] text-brass hover:text-brass-bright font-mono"
+              className="text-xs text-brass hover:text-brass-bright font-mono"
             >
               {t("autoFillHP")} ({suggestedMaxHp})
             </button>
           )}
         </div>
 
-        <div className="rounded border border-parchment-line bg-parchment-dim px-3 py-2">
-          <p className="font-mono text-xs uppercase text-parchmentText/60">{t("hitDiceLabel")}</p>
+        <div className="rounded border border-white/10 bg-ink900 px-3 py-2">
+          <p className="font-mono text-xs uppercase text-parchment/60">{t("hitDiceLabel")}</p>
           <div className="flex items-center gap-1 text-sm">
             <input
               value={sheet.hitDiceTotal}
@@ -159,7 +159,7 @@ export default function CharacterSheetMain({ sheet, save }: { sheet: Character; 
               className="w-16 bg-transparent font-display"
               placeholder="1d8"
             />
-            <span className="text-parchmentText/40">·</span>
+            <span className="text-parchment/60">·</span>
             <input
               type="number"
               min={0}
@@ -167,12 +167,12 @@ export default function CharacterSheetMain({ sheet, save }: { sheet: Character; 
               onChange={(e) => save({ hitDiceUsed: Number(e.target.value) })}
               className="w-10 bg-transparent"
             />
-            <span className="text-xs text-parchmentText/50">{t("slotsUsedLabel")}</span>
+            <span className="text-xs text-parchment/60">{t("slotsUsedLabel")}</span>
           </div>
         </div>
 
-        <div className="rounded border border-parchment-line bg-parchment-dim px-3 py-2">
-          <p className="font-mono text-xs uppercase text-parchmentText/60 mb-1">{t("deathSavesLabel")}</p>
+        <div className="rounded border border-white/10 bg-ink900 px-3 py-2">
+          <p className="font-mono text-xs uppercase text-parchment/60 mb-1">{t("deathSavesLabel")}</p>
           <div className="flex items-center gap-3 text-xs">
             <div className="flex items-center gap-1">
               <span className="text-verdant">{t("successesLabel")}</span>
@@ -225,7 +225,7 @@ export default function CharacterSheetMain({ sheet, save }: { sheet: Character; 
         <div>
           <div className="flex items-center justify-between mb-2">
             <h3 className="font-display text-sm">{t("skillsLabel")}</h3>
-            <span className="text-[10px] font-mono text-parchmentText/50">
+            <span className="text-xs font-mono text-parchment/60">
               {t("proficientAbbr")} / {t("expertiseAbbr")}
             </span>
           </div>
@@ -251,13 +251,13 @@ export default function CharacterSheetMain({ sheet, save }: { sheet: Character; 
                   />
                   <span className="font-mono text-xs w-8">{formatModifier(bonus)}</span>
                   <span>
-                    {t(skill.i18n)} <span className="text-parchmentText/40">({t(ABILITY_I18N_KEY[skill.ability])})</span>
+                    {t(skill.i18n)} <span className="text-parchment/60">({t(ABILITY_I18N_KEY[skill.ability])})</span>
                   </span>
                 </li>
               );
             })}
           </ul>
-          <p className="text-xs mt-2 text-parchmentText/60">
+          <p className="text-xs mt-2 text-parchment/60">
             {t("passivePerceptionLabel")}: <span className="font-mono text-brass">{passivePerception}</span>
           </p>
         </div>
@@ -272,19 +272,19 @@ export default function CharacterSheetMain({ sheet, save }: { sheet: Character; 
                 placeholder={t("attackNamePlaceholder")}
                 value={atk.name}
                 onChange={(e) => updateAttack(i, { name: e.target.value })}
-                className="flex-1 rounded border border-parchment-line bg-parchment-dim px-2 py-1 text-sm"
+                className="flex-1 rounded border border-white/10 bg-ink900 px-2 py-1 text-sm"
               />
               <input
                 placeholder={t("attackBonusPlaceholder")}
                 value={atk.bonus}
                 onChange={(e) => updateAttack(i, { bonus: e.target.value })}
-                className="w-20 rounded border border-parchment-line bg-parchment-dim px-2 py-1 text-sm"
+                className="w-20 rounded border border-white/10 bg-ink900 px-2 py-1 text-sm"
               />
               <input
                 placeholder={t("attackDamagePlaceholder")}
                 value={atk.damageType}
                 onChange={(e) => updateAttack(i, { damageType: e.target.value })}
-                className="w-32 rounded border border-parchment-line bg-parchment-dim px-2 py-1 text-sm"
+                className="w-32 rounded border border-white/10 bg-ink900 px-2 py-1 text-sm"
               />
               <button onClick={() => removeAttack(i)} className="text-crimson text-xs px-1">
                 ×
@@ -309,8 +309,8 @@ export default function CharacterSheetMain({ sheet, save }: { sheet: Character; 
               ["platinumPieces", "currencyPP"],
             ] as const
           ).map(([field, labelKey]) => (
-            <div key={field} className="rounded border border-parchment-line bg-parchment-dim text-center py-1.5">
-              <p className="font-mono text-[10px] uppercase text-parchmentText/60">{t(labelKey)}</p>
+            <div key={field} className="rounded border border-white/10 bg-ink900 text-center py-1.5">
+              <p className="font-mono text-xs uppercase text-parchment/60">{t(labelKey)}</p>
               <input
                 type="number"
                 min={0}
@@ -325,7 +325,7 @@ export default function CharacterSheetMain({ sheet, save }: { sheet: Character; 
           defaultValue={sheet.equipmentList}
           onBlur={(e) => save({ equipmentList: e.target.value })}
           rows={3}
-          className="w-full rounded border border-parchment-line bg-parchment-dim px-3 py-2 text-sm"
+          className="w-full rounded border border-white/10 bg-ink900 px-3 py-2 text-sm"
         />
       </div>
 
@@ -335,14 +335,14 @@ export default function CharacterSheetMain({ sheet, save }: { sheet: Character; 
           defaultValue={sheet.languagesProficiencies}
           onBlur={(e) => save({ languagesProficiencies: e.target.value })}
           rows={2}
-          className="w-full rounded border border-parchment-line bg-parchment-dim px-3 py-2 text-sm"
+          className="w-full rounded border border-white/10 bg-ink900 px-3 py-2 text-sm"
         />
       </div>
 
       <div>
         <h3 className="font-display text-sm mb-2">{t("featuresTraits")}</h3>
         <ul className="space-y-1 text-sm">
-          {sheet.features.length === 0 && <li className="text-parchmentText/60">{t("noneRecorded")}</li>}
+          {sheet.features.length === 0 && <li className="text-parchment/60">{t("noneRecorded")}</li>}
           {sheet.features.map((f, i) => (
             <li key={i}>
               <span className="font-medium">{f.name}:</span> {f.description}
@@ -357,7 +357,7 @@ export default function CharacterSheetMain({ sheet, save }: { sheet: Character; 
           defaultValue={sheet.notes ?? ""}
           onBlur={(e) => save({ notes: e.target.value })}
           rows={3}
-          className="w-full rounded border border-parchment-line bg-parchment-dim px-3 py-2 text-sm"
+          className="w-full rounded border border-white/10 bg-ink900 px-3 py-2 text-sm"
         />
       </div>
     </div>
@@ -378,8 +378,8 @@ function Stat({
   suffix?: string;
 }) {
   return (
-    <div className="rounded border border-parchment-line bg-parchment-dim text-center py-2">
-      <p className="font-mono text-xs uppercase text-parchmentText/60">{label}</p>
+    <div className="rounded border border-white/10 bg-ink900 text-center py-2">
+      <p className="font-mono text-xs uppercase text-parchment/60">{label}</p>
       <p className="font-display text-lg">
         {prefix}
         <input

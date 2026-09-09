@@ -8,13 +8,13 @@ export default function LoginPage() {
   const { t } = useLanguage();
 
   return (
-    <div className="mx-auto mt-16 max-w-sm rounded-lg bg-parchment text-parchmentText p-6 shadow-lg">
+    <div className="login-card">
       <div className="flex items-center justify-between mb-4">
         <h1 className="font-display text-2xl">{t("enterTheTavern")}</h1>
         <LanguageToggle />
       </div>
 
-      <p className="text-sm mb-5 text-parchmentText/80">{t("discordOnlyNotice")}</p>
+      <p className="text-sm mb-5 text-parchment/80">{t("discordOnlyNotice")}</p>
 
       <button
         onClick={() => signIn("discord", { callbackUrl: "/" })}

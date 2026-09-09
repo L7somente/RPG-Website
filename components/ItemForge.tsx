@@ -16,7 +16,7 @@ type ForgedItemT = {
 type CharacterOption = { id: string; name: string; user: { username: string } };
 
 const RARITY_COLOR: Record<string, string> = {
-  common: "text-parchmentText/60",
+  common: "text-parchment/60",
   uncommon: "text-verdant",
   rare: "text-brass-bright",
   very_rare: "text-crimson-bright",

@@ -18,7 +18,7 @@ const STATUS_STYLE: Record<string, string> = {
   pending_approval: "text-brass-bright",
   available: "text-verdant",
   active: "text-crimson-bright",
-  completed: "text-parchmentText/50",
+  completed: "text-parchment/60",
   rejected: "text-crimson",
 };
 
@@ -78,11 +78,11 @@ export default function QuestOversight() {
   }
 
   return (
-    <section className="rounded-lg bg-parchment text-parchmentText p-5 shadow-lg">
+    <section className="rounded-lg bg-ink-panel text-parchment p-5 shadow-lg">
       <h2 className="font-display text-lg mb-1">{t("questsByMaster")}</h2>
-      <p className="text-xs text-parchmentText/60 mb-4">{t("questsByMasterHint")}</p>
+      <p className="text-xs text-parchment/60 mb-4">{t("questsByMasterHint")}</p>
 
-      {byDM.size === 0 && <p className="text-sm text-parchmentText/60">{t("noQuestsRegisteredYet")}</p>}
+      {byDM.size === 0 && <p className="text-sm text-parchment/60">{t("noQuestsRegisteredYet")}</p>}
 
       <div className="space-y-5">
         {[...byDM.entries()].map(([dmId, group]) => (
@@ -92,22 +92,22 @@ export default function QuestOversight() {
               {group.quests.map((q) => (
                 <li key={q.id} className="ledger-rule pb-3">
                   <p className="font-medium">{q.title}</p>
-                  <p className="text-sm text-parchmentText/70">{q.description}</p>
+                  <p className="text-sm text-parchment/70">{q.description}</p>
                   <p className={`text-xs font-mono ${STATUS_STYLE[q.status]}`}>{STATUS_LABEL[q.status] ?? q.status}</p>
                   {q.votes.length > 0 && (
-                    <p className="text-xs text-parchmentText/50 mt-1">
+                    <p className="text-xs text-parchment/60 mt-1">
                       {t("votedLabel")}: {q.votes.map((v) => v.user.username).join(", ")}
                     </p>
                   )}
 
                   <div className="mt-2 flex flex-wrap items-center gap-2">
-                    <label className="text-xs font-mono text-parchmentText/60">XP:</label>
+                    <label className="text-xs font-mono text-parchment/60">XP:</label>
                     <input
                       type="number"
                       min={0}
                       value={rewardDraft[q.id] ?? q.xpReward}
                       onChange={(e) => setRewardDraft({ ...rewardDraft, [q.id]: Number(e.target.value) })}
-                      className="w-20 rounded border border-parchment-line bg-parchment-dim px-2 py-1 text-sm"
+                      className="w-20 rounded border border-white/10 bg-ink900 px-2 py-1 text-sm"
                     />
                     <button
                       onClick={() => saveReward(q.id)}

@@ -25,16 +25,16 @@ export default function DMQuestForm({ onCreated }: { onCreated?: () => void }) {
   }
 
   return (
-    <section className="rounded-lg bg-parchment text-parchmentText p-5 shadow-lg">
+    <section className="rounded-lg bg-ink-panel text-parchment p-5 shadow-lg">
       <h2 className="font-display text-lg mb-1">{t("submitQuest")}</h2>
-      <p className="text-xs text-parchmentText/60 mb-3">{t("submitQuestHint")}</p>
+      <p className="text-xs text-parchment/60 mb-3">{t("submitQuestHint")}</p>
       <form onSubmit={submit} className="space-y-2">
         <input
           required
           placeholder={t("titlePlaceholder")}
           value={form.title}
           onChange={(e) => setForm({ ...form, title: e.target.value })}
-          className="w-full rounded border border-parchment-line bg-parchment-dim px-3 py-2 text-sm"
+          className="w-full rounded border border-white/10 bg-ink900 px-3 py-2 text-sm"
         />
         <textarea
           required
@@ -42,16 +42,16 @@ export default function DMQuestForm({ onCreated }: { onCreated?: () => void }) {
           rows={3}
           value={form.description}
           onChange={(e) => setForm({ ...form, description: e.target.value })}
-          className="w-full rounded border border-parchment-line bg-parchment-dim px-3 py-2 text-sm"
+          className="w-full rounded border border-white/10 bg-ink900 px-3 py-2 text-sm"
         />
         <div className="flex items-center gap-2">
-          <label className="text-xs font-mono uppercase text-parchmentText/60">{t("xpRewardLabel")}</label>
+          <label className="text-xs font-mono uppercase text-parchment/60">{t("xpRewardLabel")}</label>
           <input
             type="number"
             min={0}
             value={form.xpReward}
             onChange={(e) => setForm({ ...form, xpReward: Number(e.target.value) })}
-            className="w-24 rounded border border-parchment-line bg-parchment-dim px-2 py-1 text-sm"
+            className="w-24 rounded border border-white/10 bg-ink900 px-2 py-1 text-sm"
           />
         </div>
         {status === "ok" && <p className="text-sm text-verdant">{t("submittedAwaitingApproval")}</p>}

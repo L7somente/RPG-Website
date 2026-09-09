@@ -33,7 +33,7 @@ export default function NoticeBoard() {
               <p className="font-medium">{n.title}</p>
             </div>
             <p className="text-sm text-parchment/70">{n.content}</p>
-            <p className="text-xs font-mono text-parchment/40 mt-1">
+            <p className="text-xs font-mono text-parchment/60 mt-1">
               {new Date(n.createdAt).toLocaleString()}
             </p>
           </li>

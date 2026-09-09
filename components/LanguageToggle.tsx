@@ -17,7 +17,7 @@ export default function LanguageToggle({ compact = false }: { compact?: boolean 
       }
     >
       <Languages size={compact ? 20 : 16} />
-      <span className={compact ? "text-[10px] font-mono" : "font-mono"}>{lang === "pt" ? "PT" : "EN"}</span>
+      <span className={compact ? "text-xs font-mono" : "font-mono"}>{lang === "pt" ? "PT" : "EN"}</span>
     </button>
   );
 }

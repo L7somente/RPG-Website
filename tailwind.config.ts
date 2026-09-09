@@ -8,28 +8,28 @@ const config: Config = {
     extend: {
       colors: {
         ink: {
-          DEFAULT: "#14171F", // page background
-          panel: "#1B2029",   // raised dark panel (nav, footers)
+          DEFAULT: "#0B1018", // page background
+          panel: "#151D29",   // raised dark panel (nav, footers)
         },
         parchment: {
-          DEFAULT: "#EDE4D3", // sheet/card background
-          dim: "#DCCFB0",     // secondary card / input background
-          line: "#C9B78E",    // hairline rules on parchment
+          DEFAULT: "#E4E9F1", // sheet/card background
+          dim: "#121A25",     // secondary card / input background
+          line: "#303B4C",    // hairline rules on parchment
         },
         brass: {
-          DEFAULT: "#B08D57",
-          bright: "#D1AE79",
+          DEFAULT: "#C7A974",
+          bright: "#DFC38E",
         },
         crimson: {
           DEFAULT: "#8C2F39",
-          bright: "#B23A46",
+          bright: "#EF8D98",
         },
         verdant: {
-          DEFAULT: "#4C6B4F",
-          bright: "#6C9470",
+          DEFAULT: "#69B49B",
+          bright: "#95D9BC",
         },
         ink900: "#0D0F14",
-        parchmentText: "#241F1A",
+        parchmentText: "#E4E9F1",
       },
       fontFamily: {
         display: ["Cinzel", "serif"],

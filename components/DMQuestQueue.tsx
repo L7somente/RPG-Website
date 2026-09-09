@@ -17,7 +17,7 @@ const STATUS_STYLE: Record<string, string> = {
   pending_approval: "text-brass",
   available: "text-verdant",
   active: "text-crimson-bright",
-  completed: "text-parchment/50",
+  completed: "text-parchment/60",
   rejected: "text-crimson",
 };
 

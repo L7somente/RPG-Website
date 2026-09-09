@@ -4,28 +4,8 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { isDM } from "@/lib/roles";
 import { apiError } from "@/lib/api-helpers";
-import { syncDiscordVoiceChannelAccess } from "@/lib/discord";
-
-async function resyncVoiceChannel(sessionId: string) {
-  const gameSession = await prisma.gameSession.findUnique({
-    where: { id: sessionId },
-    include: { participants: { include: { user: { select: { discordId: true } } } } },
-  });
-  if (!gameSession?.discordVoiceChannelId) return;
-
-  const [creator, admins] = await Promise.all([
-    prisma.user.findUnique({ where: { id: gameSession.createdBy }, select: { discordId: true } }),
-    prisma.user.findMany({ where: { role: "ADMIN" }, select: { discordId: true } }),
-  ]);
-
-  const allowedDiscordIds = [
-    creator?.discordId,
-    ...admins.map((a) => a.discordId),
-    ...gameSession.participants.map((p) => p.user.discordId),
-  ].filter((id): id is string => Boolean(id));
-
-  await syncDiscordVoiceChannelAccess(gameSession.discordVoiceChannelId, allowedDiscordIds);
-}
+import { syncSession } from "@/server/session-sync";
+import { isAdmin } from "@/lib/roles";
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -33,10 +13,14 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     const session = await getServerSession(authOptions);
     if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+    const table = await prisma.gameSession.findUnique({ where: { id } });
+    if (!table) return NextResponse.json({ error: "Sessão não encontrada." }, { status: 404 });
+    if (table.endedAt) return NextResponse.json({ error: "Esta sessão já foi encerrada." }, { status: 409 });
     const requesterId = (session.user as any).id;
     const requesterIsDM = isDM(session);
     const body = await req.json();
 
+    if (body.userId && body.userId !== requesterId && !isAdmin(session) && table.createdBy !== requesterId) return NextResponse.json({ error: "Somente o DM desta mesa pode atribuir jogadores." }, { status: 403 });
     let targetUserId: string = body.userId ?? requesterId;
     let characterId: string | null = body.characterId ?? null;
 
@@ -61,7 +45,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       include: { user: { select: { id: true, username: true } } },
     });
 
-    await resyncVoiceChannel(id);
+    await syncSession(prisma, id);
 
     return NextResponse.json({ participant }, { status: 201 });
   } catch (e) {

@@ -1,70 +1,32 @@
 "use client";
-
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
-import { Home, Settings, LogOut } from "lucide-react";
-import { useLanguage } from "@/lib/i18n/LanguageProvider";
+import { Hexagon, Home, Settings, LogOut, CalendarDays, ScrollText, BookOpen, Shield } from "lucide-react";
 import LanguageToggle from "./LanguageToggle";
-
 export default function Sidebar() {
   const pathname = usePathname();
-  const { data: authSession } = useSession();
-  const { t } = useLanguage();
-
-  if (!authSession) return null; // nothing to navigate to before login
-  const isHome = pathname === "/";
-
+  const { data: session } = useSession();
+  const role = (session?.user as { role?: string })?.role;
   const items = [
-    { href: "/", icon: Home, label: t("home"), active: isHome },
-    { href: "/account", icon: Settings, label: t("accountSettings"), active: pathname === "/account" },
+    { href: "/", icon: Home, label: "Início" },
+    { href: "/characters", icon: BookOpen, label: "Fichas" },
+    { href: "/sessions", icon: CalendarDays, label: "Sessões" },
+    { href: "/dashboard", icon: ScrollText, label: "Mural" },
   ];
-
-  return (
-    <>
-      {/* Desktop: fixed left column */}
-      <aside className="hidden sm:flex flex-col items-center gap-6 fixed left-0 top-0 h-full w-16 bg-ink-panel border-r border-brass/20 pt-20 z-40">
-        {items.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            title={item.label}
-            className={`flex flex-col items-center gap-1 ${item.active ? "text-brass-bright" : "text-parchment/60 hover:text-brass-bright"}`}
-          >
-            <item.icon size={20} />
-            <span className="text-[10px] font-mono">{item.label.split(" ")[0]}</span>
-          </Link>
-        ))}
-
-        <div className="mt-auto mb-6 flex flex-col items-center gap-6">
+  const active = (href: string) => href === "/" ? pathname === href : pathname.startsWith(href);
+  return <>
+    <header className="site-nav">
+      <div className="site-nav-inner">
+        <Link href="/" className="brand" aria-label="The Ledger — início"><span className="brand-mark"><Hexagon size={25} strokeWidth={1.2} /><span>L</span></span><span>THE LEDGER</span></Link>
+        <nav className="desktop-nav" aria-label="Navegação principal">{items.map(item => <Link key={item.href} href={item.href} aria-current={active(item.href) ? "page" : undefined} className={active(item.href) ? "nav-link is-active" : "nav-link"}>{item.label}</Link>)}</nav>
+        <div className="nav-tools">
+          {(role === "DM" || role === "ADMIN") && <Link className="icon-button" href={role === "ADMIN" ? "/admin" : "/dm"} title="Painel do mestre" aria-label="Painel do mestre"><Shield size={18} /></Link>}
           <LanguageToggle compact />
-          <button
-            onClick={() => signOut({ callbackUrl: "/login" })}
-            title={t("logout")}
-            className="flex flex-col items-center gap-1 text-parchment/60 hover:text-crimson-bright"
-          >
-            <LogOut size={20} />
-            <span className="text-[10px] font-mono">{t("logout").split(" ")[0]}</span>
-          </button>
+          {session ? <><Link className="icon-button" href="/account" title="Minha conta" aria-label="Minha conta"><Settings size={18} /></Link><button className="icon-button" onClick={() => signOut({ callbackUrl: "/" })} title="Sair" aria-label="Sair"><LogOut size={17} /></button></> : <Link className="nav-login" href="/login">Entrar</Link>}
         </div>
-      </aside>
-
-      {/* Mobile: fixed bottom bar */}
-      <nav className="sm:hidden fixed bottom-0 left-0 right-0 h-14 bg-ink-panel border-t border-brass/20 flex items-center justify-around z-40">
-        {items.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className={item.active ? "text-brass-bright" : "text-parchment/60"}
-          >
-            <item.icon size={20} />
-          </Link>
-        ))}
-        <LanguageToggle compact />
-        <button onClick={() => signOut({ callbackUrl: "/login" })} className="text-parchment/60">
-          <LogOut size={20} />
-        </button>
-      </nav>
-    </>
-  );
+      </div>
+    </header>
+    <nav className="mobile-nav" aria-label="Navegação móvel">{items.map(item => <Link key={item.href} href={item.href} aria-current={active(item.href) ? "page" : undefined} className={active(item.href) ? "is-active" : ""}><item.icon size={19} /><span>{item.label}</span></Link>)}</nav>
+  </>;
 }

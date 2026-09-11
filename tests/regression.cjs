@@ -27,11 +27,60 @@ const quests = require('../app/api/quests/[id]/route.ts');
 const { authOptions } = require('../lib/auth.ts');
 const { awardXP } = require('../lib/xp.ts');
 const { Prisma } = require('@prisma/client');
+const forge = require('../app/api/forge/route.ts');
+const forgeGrant = require('../app/api/forge/[id]/grant/route.ts');
+const { generateItem, forgedItemSchema, ITEM_TYPES, RARITIES } = require('../lib/item-forge.ts');
 const request = (body) => new Request('http://localhost', { method: 'PATCH', body: JSON.stringify(body) });
 const params = (values) => ({ params: Promise.resolve(values) });
 beforeEach(() => {
   session = { user: { id: 'owner', role: 'DM' } };
   Object.keys(prisma).forEach(k => delete prisma[k]);
+});
+
+test('forge generates valid editable drafts for every type, rarity and language', () => {
+  for (const lang of ['pt', 'en']) for (const type of ITEM_TYPES) for (const rarity of RARITIES) {
+    const draft = generateItem(type, rarity, lang);
+    assert.equal(forgedItemSchema.safeParse(draft).success, true);
+    assert.equal(draft.itemType, type); assert.equal(draft.rarity, rarity);
+    assert.ok(draft.name.length); assert.ok(draft.effect.length);
+  }
+});
+
+test('forge rejects invalid data before saving and preserves generated properties', async () => {
+  let saved;
+  prisma.forgedItem = { create: async ({ data }) => { saved = data; return { id: 'blueprint', ...data }; } };
+  for (const patch of [{ name: 42 }, { name: '  ' }, { weight: -1 }, { itemType: 'invalid' }, { rarity: 'invalid' }, { effect: 'x'.repeat(4001) }]) {
+    assert.equal((await forge.POST(request({ name: 'Sword', ...patch }))).status, 400);
+    assert.equal(saved, undefined);
+  }
+  const draft = generateItem('weapon', 'rare');
+  assert.equal((await forge.POST(request(draft))).status, 201);
+  assert.equal(saved.createdBy, 'owner');
+  assert.deepEqual(saved.properties, { bonus: draft.bonus, effect: draft.effect });
+});
+
+test('forge enforces DM access and valid grant quantities', async () => {
+  session.user.role = 'PLAYER';
+  assert.equal((await forge.POST(request({ name: 'Sword' }))).status, 403);
+  assert.equal((await forgeGrant.POST(request({ characterId: 'c' }), params({ id: 'b' }))).status, 403);
+  session.user.role = 'DM';
+  for (const quantity of [0, -1, 1.5, 1000, '2', null]) {
+    assert.equal((await forgeGrant.POST(request({ characterId: 'c', quantity }), params({ id: 'b' }))).status, 400);
+  }
+});
+
+test('forge grants complete item copies and handles missing records', async () => {
+  const blueprint = { name: 'Blade', itemType: 'weapon', rarity: 'rare', weight: 3, description: 'Runes', properties: { bonus: '+1', effect: 'Light' } };
+  let saved;
+  prisma.forgedItem = { findUnique: async () => blueprint };
+  prisma.character = { findUnique: async () => ({ id: 'c' }) };
+  prisma.inventoryItem = { create: async ({ data }) => { saved = data; return data; } };
+  assert.equal((await forgeGrant.POST(request({ characterId: 'c', quantity: 3 }), params({ id: 'b' }))).status, 201);
+  assert.deepEqual(saved, { characterId: 'c', name: 'Blade', itemType: 'weapon', quantity: 3, weight: 3, description: 'Runes', properties: { bonus: '+1', effect: 'Light', rarity: 'rare' } });
+  prisma.character.findUnique = async () => null;
+  assert.equal((await forgeGrant.POST(request({ characterId: 'c' }), params({ id: 'b' }))).status, 404);
+  prisma.forgedItem.findUnique = async () => null;
+  assert.equal((await forgeGrant.POST(request({ characterId: 'c' }), params({ id: 'b' }))).status, 404);
 });
 test('rejects nested account updates, ownership changes and unknown fields', () => {
   for (const patch of [{ user: { update: { role: 'ADMIN' } } }, { userId: 'other' }, { id: 'other' }, { inventory: { deleteMany: {} } }]) {

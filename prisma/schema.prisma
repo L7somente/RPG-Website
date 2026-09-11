@@ -191,6 +191,8 @@ model QuestVote {
 
 model GameSession {
   id                    String   @id @default(cuid())
+  owlbearRoomUrl        String?
+  owlbearRoomId         String?
   endedAt               DateTime?
   discordSyncError      String?
   discordSyncedAt       DateTime?
@@ -204,6 +206,18 @@ model GameSession {
   createdBy             String
   createdAt             DateTime @default(now())
   participants          SessionParticipant[]
+}
+
+model OwlbearAccess {
+  tokenHash   String   @id
+  userId      String
+  characterId String
+  sessionId   String
+  roomId      String
+  expiresAt   DateTime
+
+  @@index([userId, sessionId])
+  @@index([expiresAt])
 }
 
 // A player (optionally with a specific character) signed up for a given table/session.

@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { isDM } from "@/lib/roles";
 import { apiError } from "@/lib/api-helpers";
+import { grantItemSchema } from "@/lib/item-forge";
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -11,8 +12,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     const session = await getServerSession(authOptions);
     if (!isDM(session)) return NextResponse.json({ error: "DM or admin access required" }, { status: 403 });
 
-    const { characterId, quantity } = await req.json();
-    if (!characterId) return NextResponse.json({ error: "characterId required" }, { status: 400 });
+    const { characterId, quantity } = grantItemSchema.parse(await req.json());
 
     const blueprint = await prisma.forgedItem.findUnique({ where: { id } });
     if (!blueprint) return NextResponse.json({ error: "Forged item not found" }, { status: 404 });

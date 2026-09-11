@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Providers from "./providers";
-import XPBar from "@/components/XPBar";
-import Sidebar from "@/components/Sidebar";
+import AppChrome from "@/components/AppChrome";
 
 export const metadata: Metadata = {
   title: "The Ledger — Gerenciador da Campanha",
@@ -14,10 +13,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="pt-BR">
       <body className="min-h-screen bg-ink font-body text-parchment">
         <Providers>
-          <a href="#main-content" className="skip-link">Pular para o conteúdo</a>
-          <XPBar />
-          <Sidebar />
-          <main id="main-content" className="app-content">{children}</main>
+          <AppChrome>{children}</AppChrome>
         </Providers>
       </body>
     </html>

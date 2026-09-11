@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { isDM } from "@/lib/roles";
 import { apiError } from "@/lib/api-helpers";
+import { forgedItemSchema } from "@/lib/item-forge";
 
 export async function GET() {
   try {
@@ -22,8 +23,7 @@ export async function POST(req: Request) {
     const session = await getServerSession(authOptions);
     if (!isDM(session)) return NextResponse.json({ error: "DM or admin access required" }, { status: 403 });
 
-    const { name, itemType, rarity, weight, description, bonus, effect } = await req.json();
-    if (!name?.trim()) return NextResponse.json({ error: "name required" }, { status: 400 });
+    const { name, itemType, rarity, weight, description, bonus, effect } = forgedItemSchema.parse(await req.json());
 
     const item = await prisma.forgedItem.create({
       data: {

@@ -145,5 +145,8 @@ Conversão física: 1 ft = 0,3048 m; 30 ft = 9,144 m. Alternar a unidade não sa
 uma nova distância. Edições em metros são convertidas para pés, preservando
 frações no banco. Aplicar também a migração `20260909020000_fractional_speed`.
 
-O estudo de uma possível integração com Owlbear Rodeo está em
+A extensão inicial do Owlbear Rodeo inclui vínculo de sala em `/sessions`,
+pareamento temporário e ficha resumida em `/owlbear`. O manifest para instalação
+fica em `/owlbear/manifest.json`. Aplique a migração `20260909120000_owlbear_extension`
+antes de usar. As instruções e os limites de validação estão em
 [docs/OWLBEAR-INTEGRATION.md](docs/OWLBEAR-INTEGRATION.md).

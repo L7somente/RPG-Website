@@ -2,7 +2,21 @@
 
 Estudo de viabilidade · 09/09/2026. Pesquisa documental; não houve instalação de extensão nem alteração em salas reais.
 
-A integração é viável por uma extensão conectada ao Ledger. Recomendo começar pelo vínculo entre sessão e sala, seguido de uma ficha resumida dentro do tabletop. A integração ainda não foi implementada.
+A primeira versão das etapas 1 e 2 está implementada: vínculo de sala na página de sessões, manifest e painel de ficha somente de leitura. A instalação em uma sala real e o fluxo com Discord/banco ainda precisam de validação no ambiente configurado.
+
+## Usar a primeira versão
+
+1. Execute `npm ci`, `npx prisma migrate deploy`, `npx prisma generate` e `npm run build` no ambiente configurado; reinicie o site.
+2. Em `/sessions`, o DM responsável ou ADMIN cadastra o link HTTPS da sala. Apagar o link e salvar desvincula a sala. Alterar o vínculo revoga os acessos anteriores.
+3. No perfil do Owlbear, adicione a extensão pelo endereço `https://SEU-SITE/owlbear/manifest.json` e habilite-a na sala. Localmente, substitua a origem por `http://localhost:3000` (ou a porta usada pelo Ledger).
+4. Confirme a participação do jogador com sua ficha no painel de organização da sessão. O jogador abre **Conectar minha ficha ao Owlbear**, escolhe a ficha e gera o código.
+5. Cole o código no painel The Ledger dentro da sala correspondente. O painel exibe PV, PV temporários, CA, deslocamento em metros, iniciativa e ataques; consulta novamente a cada 15 segundos.
+
+O código é uma credencial de leitura de alta entropia válida por uma hora, guardada somente como hash no banco e em memória no painel. Não é um código de uso único. Gerar outro código substitui o acesso anterior desse jogador nessa sessão. **Revogar acesso** invalida-o no servidor; **Desconectar deste painel** apenas limpa a memória local. Fechar/reabrir o painel exige colar o código novamente. Não compartilhe o código.
+
+Cada consulta verifica existência do usuário, propriedade da ficha, participação confirmada com a ficha selecionada (ou gestão da sessão), sala vinculada e sessão não encerrada. O identificador da sala enviado pelo SDK é contexto, não prova de identidade. Nenhuma ficha é publicada em metadata do Owlbear. Códigos não autorizam escrita. O painel limpa a ficha quando a consulta falha.
+
+Esta versão não modifica tokens nem implementa iniciativa compartilhada ou sincronização de duas vias. Os testes automatizados verificam permissões, expiração, revogação, isolamento e validação de URLs com banco simulado. Para concluir a validação real: instalar em uma sala, parear com Discord, alterar PV no Ledger, aguardar a atualização e revogar acesso; testar também com outro jogador e uma sala diferente.
 
 ## Capacidades e prioridades
 
@@ -50,4 +64,4 @@ Essas escolhas são recomendações de implementação. O cargo GM e o identific
 
 **4. Sincronização contínua.** Eventos de alteração, versões e recuperação de conexão. Testar duas abas, edições concorrentes, revogação de acesso e retorno após queda.
 
-Próximo passo recomendado: um protótipo das etapas 1 e 2 após configurar banco e login Discord locais. Não instalar uma integração aparente sem testar dentro de uma sala real.
+Próximo passo: validar as etapas 1 e 2 dentro de uma sala real com banco e login Discord configurados, antes de implementar vínculos com tokens.

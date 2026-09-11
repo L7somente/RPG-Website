@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import OwlbearSession from "@/components/OwlbearSession";
 type Session = { id: string; title: string; description?: string; scheduledAt: string; endedAt: string | null; status: "active" | "scheduled" | "completed"; createdBy: string; discordSyncError?: string; discordSyncedAt?: string; discordEventId?: string; participants: { id: string; user: { username: string } }[] };
 export default function SessionHub() {
   const { data: auth } = useSession();
@@ -37,6 +38,7 @@ export default function SessionHub() {
           <p className="text-sm text-parchment/70">{new Date(s.scheduledAt).toLocaleString("pt-BR")}{s.endedAt && ` · Encerrada em ${new Date(s.endedAt).toLocaleString("pt-BR")}`}</p>
           <p className="text-sm">{s.participants.map(p => p.user.username).join(", ") || "Sem participantes confirmados"}</p>
           {s.discordEventId && process.env.NEXT_PUBLIC_DISCORD_GUILD_ID && <a className="inline-block underline text-brass" href={`https://discord.com/events/${process.env.NEXT_PUBLIC_DISCORD_GUILD_ID}/${s.discordEventId}`} target="_blank" rel="noreferrer">Ver evento no Discord</a>}
+          <OwlbearSession sessionId={s.id} roomUrl={(s as Session & { owlbearRoomUrl?: string }).owlbearRoomUrl} canManage={canManage} ended={!!s.endedAt} signedIn={!!user?.id} reload={load} />
           {canManage && <div className="space-y-3"><p className="text-sm text-parchment/70">{s.discordSyncError || (!s.discordSyncedAt ? "Sincronização com Discord pendente." : "Sincronizado com Discord.")}</p><div className="flex flex-wrap gap-3">
             {!s.endedAt && <button disabled={busy !== null} onClick={() => void act(s.id, "end")} className="rounded bg-crimson px-4 py-2 disabled:opacity-50">{busy === s.id ? "Aguarde…" : "Encerrar sessão"}</button>}
             <button disabled={busy !== null} onClick={() => void act(s.id, "sync")} className="rounded border border-brass/40 px-4 py-2 disabled:opacity-50">Sincronizar Discord</button>

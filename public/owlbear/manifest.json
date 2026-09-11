@@ -1,0 +1,14 @@
+{
+  "name": "The Ledger — Ficha de campanha",
+  "version": "0.1.0",
+  "manifest_version": 1,
+  "description": "Consulte sua ficha do Ledger dentro da mesa: PV, CA, deslocamento, iniciativa e ataques.",
+  "icon": "/owlbear/icon.svg",
+  "action": {
+    "title": "The Ledger",
+    "icon": "/owlbear/icon.svg",
+    "popover": "/owlbear",
+    "width": 400,
+    "height": 600
+  }
+}
